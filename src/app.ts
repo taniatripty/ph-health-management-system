@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.use("/api/v1/specialities", specialityRoute);
 
-// Basic route
+
 app.get("/", async (req: Request, res: Response) => {
    res.send('Hello, TypeScript + Express!');
 })
