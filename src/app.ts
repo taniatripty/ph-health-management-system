@@ -4,12 +4,11 @@ import { specialityRoute } from "./app/module/speciality/speciality.routes";
 
 
 const app: Application = express();
-// The port your express server will be running on.
 
-// Enable URL-encoded form data parsing
+
+
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware to parse JSON bodies
 app.use(express.json());
 
 app.use("/api/v1/specialities", specialityRoute);
