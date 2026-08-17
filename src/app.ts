@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from "express";
-import { specialityRoute } from "./app/module/speciality/speciality.routes";
+import { IndexsRoute } from "./app/routes";
+
 
 
 
@@ -11,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 
-app.use("/api/v1/specialities", specialityRoute);
+app.use("/api/v1",IndexsRoute);
 
 
 app.get("/", async (req: Request, res: Response) => {
