@@ -1063,6 +1063,8 @@ export const UserScalarFieldEnum = {
   image: 'image',
   role: 'role',
   status: 'status',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
   needPasswordChange: 'needPasswordChange',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1120,7 +1122,7 @@ export const DoctorScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
-  profilePhote: 'profilePhote',
+  profilePhoto: 'profilePhoto',
   contactNumber: 'contactNumber',
   address: 'address',
   gender: 'gender',

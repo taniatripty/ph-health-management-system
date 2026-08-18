@@ -6,6 +6,8 @@ model User {
   image              String?
   role               Role       @default(PATIENT)
   status             UserStatus @default(ACTIVE)
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
   needPasswordChange Boolean    @default(false)
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt

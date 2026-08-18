@@ -2,12 +2,12 @@ model Doctor {
     id String @id @default(uuid())
     name String
     email String @unique
-    profilePhote String?
+    profilePhoto String?
     contactNumber String?
     address       String?
     gender Gender
     appointmentFee Float
-    experience Int
+    experience Int?
     registrationNumber String
     qualification       String
     currentWorkingPlace String

@@ -7,15 +7,16 @@ model Speciality {
   updatedAt   DateTime  @updatedAt
   isDeleted   Boolean   @default(false)
   deletedAt   DateTime?
- DoctorSpecialty DoctorSpecialty?
+ doctorSpecialties DoctorSpecialty[]
   @@index([title], name: "idx_speciality_title")
   @@map("specialities")
 }
 
 model DoctorSpecialty{
   id String @id @default(uuid())
-  doctorId String @unique
-  specialtyId String @unique
+  doctorId String 
+  specialtyId String 
+  @@unique([doctorId, specialtyId])
   doctor Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade ,onUpdate: Cascade)
   speciatily Speciality @relation(fields: [specialtyId] ,references: [id] ,onDelete: Cascade ,onUpdate: Cascade)
   @@index([doctorId], name: "idx_doctor_specialty_doctorId")
