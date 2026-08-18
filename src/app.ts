@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from "express";
 import { IndexsRoute } from "./app/routes";
+import { notFound } from "./app/middleware/notFound";
 
 
 
@@ -19,4 +20,5 @@ app.get("/", async (req: Request, res: Response) => {
    res.send('Hello, TypeScript + Express!');
 })
 
+app.use(notFound)
 export default app;

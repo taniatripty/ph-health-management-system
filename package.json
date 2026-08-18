@@ -8,7 +8,12 @@
     "start": "node dist/server.js",
     "build": "tsc ",
     "dev": "tsx watch src/server.ts",
-    "eslint": "eslint ./src/**/*"
+    "eslint": "eslint ./src/**/*",
+    "migrate": "prisma migrate dev",
+    "generate": "prisma generate",
+    "studio": "prisma studio",
+    "push": "prisma db push",
+    "pull": "prisma db pull"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +25,7 @@
     "better-auth": "^1.6.29",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "http-status": "^2.1.0",
     "pg": "^8.23.0",
     "tsx": "^4.23.12"
   },
