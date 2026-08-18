@@ -1,9 +1,10 @@
 
 import app from "./app";
 import "dotenv/config"
+import { envVars } from "./app/config/env";
 
-const port=process.env.PORT
 
+const port=envVars.PORT
 
 const bootcamp=()=>{
   try {
