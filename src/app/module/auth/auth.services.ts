@@ -1,6 +1,8 @@
 
+import { UserStatus } from "../../../generated/prisma/enums";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
+import { tokenUtils } from "../../utlis/token";
 
 type RegisterUserPayload = {
   name: string;
@@ -38,11 +40,34 @@ throw new Error ("failed to register patient")
         email:data.user.email
       }
     })
+
     return patientx
   })
 
+  const accessToken =tokenUtils.getAccessToken({
+        userId: data.user.id,
+        role: data.user.role,
+        name: data.user.name,
+        email: data.user.email,
+        status: data.user.status,
+        emailVerified: data.user.emailVerified,
+    });
+
+    const refreshToken = tokenUtils.getRefreshToken({
+        userId: data.user.id,
+        role: data.user.role,
+        name: data.user.name,
+        email: data.user.email,
+        status: data.user.status,
+        
+        emailVerified: data.user.emailVerified,
+    });
+
+
    return {
     ...data,
+    accessToken,
+    refreshToken,
     patient
   };
   
@@ -71,7 +96,34 @@ const loginUser = async (payload: LoginUserPayload) => {
     },
   });
 
-  return data;
+  if(data.user.status==UserStatus.BLOCKED){
+    throw new Error("user is blocked")
+  }
+
+   const accessToken =tokenUtils.getAccessToken({
+        userId: data.user.id,
+        role: data.user.role,
+        name: data.user.name,
+        email: data.user.email,
+        status: data.user.status,
+        emailVerified: data.user.emailVerified,
+    });
+
+    const refreshToken = tokenUtils.getRefreshToken({
+        userId: data.user.id,
+        role: data.user.role,
+        name: data.user.name,
+        email: data.user.email,
+        status: data.user.status,
+        
+        emailVerified: data.user.emailVerified,
+    });
+
+  return {
+    ...data,
+    accessToken,
+    refreshToken
+  }
 };
 
 export const authServices = {
