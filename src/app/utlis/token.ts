@@ -25,7 +25,7 @@ const getRefreshToken=(payload:JwtPayload)=>{
 
 const setAccesstoken=(res:Response,token:string)=>{
     
-    cookieUtils.setCookie(res,'accesstoken',token,{
+    cookieUtils.setCookie(res,'accessToken',token,{
           httpOnly: true,
         secure: true,
         sameSite: "none",
