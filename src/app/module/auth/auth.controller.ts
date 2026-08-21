@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import { authServices } from "./auth.services";
 import catchAsync from "../../shared/catchAsync";
 import { tokenUtils } from "../../utlis/token";
+import sendResponse from "../../shared/sendResponse";
+import status from "http-status";
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
   const result = await authServices.registerUser(req.body);
@@ -42,7 +44,24 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     },
   });
 });
+
+const getMe = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user;
+        console.log({user});
+        const result = await authServices.getme(user);
+        sendResponse({
+          res, 
+            statusCode : status.OK,
+            success: true,
+            message: "User profile fetched successfully",
+            data: result,
+        }
+        )
+    }
+)
 export const authController = {
   registerUser,
-  loginUser
+  loginUser,
+  getMe
 };
