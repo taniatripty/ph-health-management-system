@@ -5,6 +5,7 @@ import catchAsync from "../../shared/catchAsync";
 import { tokenUtils } from "../../utlis/token";
 import sendResponse from "../../shared/sendResponse";
 import status from "http-status";
+import { cookieUtils } from "../../utlis/cookie";
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
   const result = await authServices.registerUser(req.body);
@@ -60,8 +61,88 @@ const getMe = catchAsync(
         )
     }
 )
+
+const getnewToken=async(req:Request,res:Response)=>{
+   const refreshToken = req.cookies.refreshToken;
+ const betterAuthSessionToken = req.cookies["better-auth.session_token"];
+if(!refreshToken){
+  throw new Error(`no refresh Token`)
+}
+const result=await authServices.getnewToken(refreshToken,betterAuthSessionToken)
+const{accessToken,refreshToken:newrefreshToken,sessionToken}=result
+ tokenUtils.setAccesstoken(res,accessToken)
+  tokenUtils.setRefreshTokenCookie(res,newrefreshToken)
+  tokenUtils.setBetterAuthCookie(res,sessionToken)
+
+     sendResponse({res, 
+          statusCode  : status.OK,
+            success: true,
+            message: "New tokens generated successfully",
+            data: {
+                accessToken,
+                refreshToken:newrefreshToken,
+                sessionToken,
+            },
+        });
+
+}
+
+const changePassword = catchAsync(
+    async (req: Request, res: Response) => {
+        const payload = req.body;
+        const betterAuthSessionToken = req.cookies["better-auth.session_token"];
+
+        const result = await authServices.changePassword(payload, betterAuthSessionToken);
+
+        const { accessToken, refreshToken, token } = result;
+
+        tokenUtils.setAccesstoken(res, accessToken);
+        tokenUtils.setRefreshTokenCookie(res, refreshToken);
+        tokenUtils.setBetterAuthCookie(res, token as string);
+
+        sendResponse({res, 
+            statusCode: status.OK,
+            success: true,
+            message: "Password changed successfully",
+            data: result,
+        });
+    }
+)
+
+const logoutUser = catchAsync(
+    async (req: Request, res: Response) => {
+        const betterAuthSessionToken = req.cookies["better-auth.session_token"];
+        const result = await authServices.logoutUser(betterAuthSessionToken);
+        cookieUtils.clearCookie(res, 'accessToken', {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+        });
+        cookieUtils.clearCookie(res, 'refreshToken', {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+        });
+        cookieUtils.clearCookie(res, 'better-auth.session_token', {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+        });
+
+        sendResponse({res, 
+            statusCode: status.OK,
+            success: true,
+            message: "User logged out successfully",
+            data: result,
+        });
+    }
+)
+
 export const authController = {
   registerUser,
   loginUser,
-  getMe
+  getMe,
+  getnewToken,
+  changePassword,
+  logoutUser
 };
