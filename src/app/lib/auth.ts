@@ -2,7 +2,8 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { Role, UserStatus } from "../../generated/prisma/enums";
-import { bearer } from "better-auth/plugins";
+import { bearer, emailOTP } from "better-auth/plugins";
+import { sendEmail } from "../utlis/email";
 
 
 
@@ -17,6 +18,11 @@ export const auth = betterAuth({
      emailAndPassword: { 
     enabled: true, 
   }, 
+  emailVerification:{
+sendOnSignUp:true,
+sendOnSignIn:true,
+autoSignInAfterVerification:true
+  },
   user:{
     additionalFields:{
         role:{
@@ -38,7 +44,34 @@ export const auth = betterAuth({
     }
   },
   plugins:[
-bearer()
+bearer(),
+emailOTP({
+  overrideDefaultEmailVerification:true,
+  async sendVerificationOTP({email,otp,type}){
+    if(type=="email-verification"){
+      const user=await prisma.user.findUnique({
+        where:{
+          email
+        }
+      })
+      if(user && !user.emailVerified){
+        sendEmail({
+          to:email,
+          subject:"varify your email",
+          templateName:"otp",
+          templateData:{
+            name:user.name,
+            otp
+          }
+        })
+      }
+      
+    }
+
+  },
+   expiresIn : 5 * 60, // 5 minutes in seconds
+   otpLength : 6,
+})
   ],
   trustedOrigins:[process.env.BETTER_AUTH_URL || "http://localhost:5000"],
   advanced:{

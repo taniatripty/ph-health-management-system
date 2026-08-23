@@ -288,11 +288,32 @@ const changePassword = async (payload : IChangePasswordPayload, sessionToken : s
 }
 
 
+const verifyEmail=async(email:string,otp:string)=>{
+  const result= await auth.api.verifyEmailOTP({
+    body:{
+      email,
+      otp
+    }
+  })
+  if(result.status && !result.user.emailVerified){
+    await prisma.user.update({
+      where:{
+        email
+      },
+      data:{
+        emailVerified:true
+      }
+    })
+  }
+
+}
+
 export const authServices = {
   registerUser,
   loginUser,
   getme,
   getnewToken,
   changePassword,
-  logoutUser
+  logoutUser,
+  verifyEmail
 };
