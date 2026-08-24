@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { JwtPayload } from "jsonwebtoken";
 import { UserStatus } from "../../../generated/prisma/enums";
@@ -377,6 +378,40 @@ const resetPassword=async(email:string,otp:string,newPassword:string)=>{
 }
 
 
+const googleLoginSuccess=async(session:Record<string,any>)=>{
+  const isPatientExist=await prisma.patient.findUnique({
+    where:{
+      userId:session.user.id
+    }
+  })
+  if(!isPatientExist){
+    await prisma.patient.create({
+     data:{
+       userId:session.user.id,
+      name:session.user.name,
+      email:session.user.email
+     }
+    })
+  }
+  const accessToken =tokenUtils.getAccessToken({
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name,
+      })
+
+       const refreshToken =tokenUtils.getRefreshToken({
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name,
+      })
+      
+      return{
+        accessToken,
+        refreshToken
+      }
+
+}
+
 
 export const authServices = {
   registerUser,
@@ -387,5 +422,6 @@ export const authServices = {
   logoutUser,
   verifyEmail,
   forgetPassword,
-  resetPassword
+  resetPassword,
+  googleLoginSuccess
 };
