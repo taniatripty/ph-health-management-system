@@ -7,6 +7,7 @@ import { sendEmail } from "../utlis/email";
 
 
 
+
 // If your Prisma file is located elsewhere, you can change the path
 
 
@@ -66,6 +67,24 @@ emailOTP({
         })
       }
       
+    }
+    else if(type==="forget-password"){
+      const user=await prisma.user.findUnique({
+        where:{
+          email
+        }
+      })
+       if(user ){
+        sendEmail({
+          to:email,
+          subject:"password reset otp",
+          templateName:"otp",
+          templateData:{
+            name:user.name,
+            otp
+          }
+        })
+      }
     }
 
   },
