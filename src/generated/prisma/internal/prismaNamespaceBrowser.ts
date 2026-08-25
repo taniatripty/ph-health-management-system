@@ -185,7 +185,7 @@ export type PatientScalarFieldEnum = (typeof PatientScalarFieldEnum)[keyof typeo
 export const SpecialityScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  descriptipm: 'descriptipm',
+  description: 'description',
   icon: 'icon',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
