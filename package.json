@@ -8,12 +8,7 @@
     "start": "node dist/server.js",
     "build": "tsc ",
     "dev": "tsx watch src/server.ts",
-    "eslint": "eslint ./src/**/*",
-    "migrate": "prisma migrate dev",
-    "generate": "prisma generate",
-    "studio": "prisma studio",
-    "push": "prisma db push",
-    "pull": "prisma db pull"
+    "eslint": "eslint ./src/**/*"
   },
   "keywords": [],
   "author": "",
