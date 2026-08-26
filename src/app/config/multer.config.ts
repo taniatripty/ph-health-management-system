@@ -6,7 +6,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinaryUpload,
     params: async (req, file) => {
         const originalName = file.originalname;
-        const extension = originalName.split(".").pop()?.toLocaleLowerCase();
+        const extension = originalName.split(".").pop()?.toLowerCase();
 
         const fileNameWithoutExtension = originalName
             .split(".")
