@@ -77,3 +77,15 @@ export interface PrismaWhereConditions {
     NOT ?: Record<string, unknown>[];
     [key: string] : unknown;
 }
+
+
+
+export interface IQueryResult<T>{
+    data : T[];
+    meta : {
+        page : number;
+        limit : number;
+        total : number;
+        totalPages : number;
+    }
+}
