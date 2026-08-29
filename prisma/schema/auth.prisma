@@ -6,15 +6,15 @@ model User {
   image              String?
   role               Role       @default(PATIENT)
   status             UserStatus @default(ACTIVE)
-  isDeleted Boolean @default(false)
-  deletedAt DateTime?
+  isDeleted          Boolean    @default(false)
+  deletedAt          DateTime?
   needPasswordChange Boolean    @default(false)
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
   sessions           Session[]
   accounts           Account[]
   patient            Patient?
-  doctor              Doctor?
+  doctor             Doctor?
 
   @@unique([email])
   @@map("user")

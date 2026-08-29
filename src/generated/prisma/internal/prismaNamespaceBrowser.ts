@@ -57,6 +57,8 @@ export const ModelName = {
   Verification: 'Verification',
   Doctor: 'Doctor',
   Patient: 'Patient',
+  Schedule: 'Schedule',
+  DoctorSchedule: 'DoctorSchedule',
   Speciality: 'Speciality',
   DoctorSpecialty: 'DoctorSpecialty'
 } as const
@@ -180,6 +182,28 @@ export const PatientScalarFieldEnum = {
 } as const
 
 export type PatientScalarFieldEnum = (typeof PatientScalarFieldEnum)[keyof typeof PatientScalarFieldEnum]
+
+
+export const ScheduleScalarFieldEnum = {
+  id: 'id',
+  startDateTime: 'startDateTime',
+  endDateTime: 'endDateTime',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ScheduleScalarFieldEnum = (typeof ScheduleScalarFieldEnum)[keyof typeof ScheduleScalarFieldEnum]
+
+
+export const DoctorScheduleScalarFieldEnum = {
+  scheduleId: 'scheduleId',
+  doctorId: 'doctorId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isBooked: 'isBooked'
+} as const
+
+export type DoctorScheduleScalarFieldEnum = (typeof DoctorScheduleScalarFieldEnum)[keyof typeof DoctorScheduleScalarFieldEnum]
 
 
 export const SpecialityScalarFieldEnum = {
