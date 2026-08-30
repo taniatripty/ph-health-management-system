@@ -8,7 +8,8 @@
     "start": "node dist/server.js",
     "build": "tsc ",
     "dev": "tsx watch src/server.ts",
-    "eslint": "eslint ./src/**/*"
+    "eslint": "eslint ./src/**/*",
+    "stripe:webhook":"stripe listen --forward-to localhost:5000/webhook"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +36,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^9.0.5",
     "pg": "^8.23.0",
+    "stripe": "^22.6.0",
     "tsx": "^4.23.12",
     "uuid": "^14.0.2",
     "zod": "^4.4.3"
