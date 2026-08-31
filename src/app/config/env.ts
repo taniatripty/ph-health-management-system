@@ -35,6 +35,8 @@ interface envConfig {
   GOOGLE_CLIENT_SECRET: string;
   GOOGLE_CALLBACK_URL: string;
   FRONTEND_URL: string;
+  SUPER_ADMIN_EMAIL:string;
+  SUPER_ADMIN_PASSWORD:string
 }
 
 const loadEnvVariable = (): envConfig => {
@@ -65,6 +67,8 @@ const loadEnvVariable = (): envConfig => {
     "STRIPE_PUBLISHABLE_kEY",
     "STRIPE_SECRET_kEY",
     "STRIPE_WEBHOOK_SECRET",
+    "SUPER_ADMIN_EMAIL",
+    "SUPER_ADMIN_PASSWORD"
   ];
   requiementVariable.forEach((vari) => {
     if (!process.env[vari]) {
@@ -108,6 +112,8 @@ const loadEnvVariable = (): envConfig => {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
+    SUPER_ADMIN_EMAIL:process.env.SUPER_ADMIN_EMAIL as string,
+    SUPER_ADMIN_PASSWORD:process.env.SUPER_ADMIN_PASSWORD as string
   };
 };
 
