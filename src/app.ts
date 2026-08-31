@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Application, Request, Response } from "express";
 import { IndexsRoute } from "./app/routes";
 import { notFound } from "./app/middleware/notFound";
@@ -9,7 +10,8 @@ import path from "node:path";
 import cors from "cors"
 import { envVars } from "./app/config/env";
 import { paymentController } from "./app/module/payment/payment.conrtoller";
-
+import corn from "node-cron"
+import { appointmentServices } from "./app/module/appointment/appointment.services";
 
 const app: Application = express();
 app.set("view engine","ejs")
@@ -24,6 +26,14 @@ app.use(cors({
     allowedHeaders : ["Content-Type", "Authorization"]
 }))
 
+corn.schedule(" */25 * * * *", async () => {
+    try {
+        console.log("Running cron job to cancel unpaid appointments...");
+        await appointmentServices.cancelUnpaidAppointments();
+    } catch (error : any) {
+        console.error("Error occurred while canceling unpaid appointments:", error.message);    
+    }
+})
 app.use("/api/auth", toNodeHandler(auth))
 
 app.use(express.urlencoded({ extended: true }));
