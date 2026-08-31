@@ -11,6 +11,7 @@ model Patient {
   updatedAt     DateTime  @updatedAt
   userId        String    @unique
    appointment Appointment[]
+   medicalReports MedicalReport[]
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([email], name: "idx_patient_email")
