@@ -77,6 +77,11 @@ export type Doctor = Prisma.DoctorModel
  */
 export type Patient = Prisma.PatientModel
 /**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel
+/**
  * Model Schedule
  * 
  */

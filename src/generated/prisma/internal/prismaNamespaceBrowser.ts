@@ -58,6 +58,7 @@ export const ModelName = {
   Verification: 'Verification',
   Doctor: 'Doctor',
   Patient: 'Patient',
+  Payment: 'Payment',
   Schedule: 'Schedule',
   DoctorSchedule: 'DoctorSchedule',
   Speciality: 'Speciality',
@@ -200,6 +201,20 @@ export const PatientScalarFieldEnum = {
 export type PatientScalarFieldEnum = (typeof PatientScalarFieldEnum)[keyof typeof PatientScalarFieldEnum]
 
 
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  transactionId: 'transactionId',
+  sprtipeEventId: 'sprtipeEventId',
+  paymentGateWayData: 'paymentGateWayData',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  appointmentId: 'appointmentId'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
 export const ScheduleScalarFieldEnum = {
   id: 'id',
   startDateTime: 'startDateTime',
@@ -253,6 +268,14 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -267,4 +290,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
