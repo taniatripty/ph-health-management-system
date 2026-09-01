@@ -11,7 +11,19 @@ const getAllDoctors = async () => {
                 include: {
                     speciatily:true
                 }
+            },
+         appointment:{
+            include:{
+                patient:true,
+                payment:true
             }
+         },
+         doctorSchedule:{
+            include:{
+                schedule:true
+            }
+         }
+           
         }
     })
     return doctors;

@@ -88,11 +88,12 @@ const bookAppointment=async(user:IRequest, payload:IBookAppointmentPayload)=>{
                 paymentId : paymentData.id,
             },
 
-            success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success`,
+            // success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success`,
+             success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success?session_id={CHECKOUT_SESSION_ID}`,
 
             // cancel_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-failed`,
             cancel_url: `${envVars.FRONTEND_URL}/dashboard/appointments`,
-    })
+     })
     return {
          appointmentData,
             paymentData,

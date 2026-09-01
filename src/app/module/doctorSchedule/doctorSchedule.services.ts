@@ -9,7 +9,7 @@ const createmySchedule=async(user:IRequest,payload:ICreateDoctorSchedulePayload)
             email:user.email
         }
     })
-
+console.log(doctorData)
     const doctorScheduluData=payload.scheduleIds.map((scheduleId)=>({
          doctorId:doctorData?.id,
         scheduleId

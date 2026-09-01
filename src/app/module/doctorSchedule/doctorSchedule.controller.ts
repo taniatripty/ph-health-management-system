@@ -5,6 +5,8 @@ import { doctorScheduleServices } from "./doctorSchedule.services";
 const createDoctorSchedule = catchAsync(async (req , res) => {
   const payload=req.body
  const user=req.user
+  
+ console.log(req.user)
 
   console.log("paylod :",payload)
   const result = await doctorScheduleServices.createmySchedule(user,payload);
