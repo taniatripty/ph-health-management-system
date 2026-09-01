@@ -235,8 +235,9 @@ export const PaymentScalarFieldEnum = {
   id: 'id',
   amount: 'amount',
   transactionId: 'transactionId',
-  sprtipeEventId: 'sprtipeEventId',
-  paymentGateWayData: 'paymentGateWayData',
+  stripeEventId: 'stripeEventId',
+  status: 'status',
+  paymentGatewayData: 'paymentGatewayData',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   appointmentId: 'appointmentId'

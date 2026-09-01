@@ -74,8 +74,8 @@ import { globalErrorHandler } from "./app/middleware/globarErrorHandler";
 import { auth } from "./app/lib/auth";
 import { envVars } from "./app/config/env";
 
-import { paymentController } from "./app/module/payment/payment.conrtoller";
 import { appointmentServices } from "./app/module/appointment/appointment.services";
+import { PaymentController } from "./app/module/payment/payment.conrtoller";
 
 const app: Application = express();
 
@@ -98,9 +98,7 @@ app.set(
 
 app.post(
   "/webhook",
-  express.raw({ type: "application/json" }),
-  paymentController.handlerStripeWebhookEvent,
-);
+  express.raw({ type: "application/json" }),PaymentController.handleStripeWebhookEvent);
 
 // ==========================================
 // CORS

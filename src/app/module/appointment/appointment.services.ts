@@ -94,6 +94,7 @@ const bookAppointment=async(user:IRequest, payload:IBookAppointmentPayload)=>{
             // cancel_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-failed`,
             cancel_url: `${envVars.FRONTEND_URL}/dashboard/appointments`,
      })
+     console.log("sesion", session)
     return {
          appointmentData,
             paymentData,
@@ -238,12 +239,16 @@ const initiatePayment = async (appointmentId: string, user : IRequest) => {
 
         success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success?appointment_id=${appointmentData.id}&payment_id=${appointmentData.payment.id}`,
 
+      
         // cancel_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-failed`,
         cancel_url: `${envVars.FRONTEND_URL}/dashboard/appointments?error=payment_cancelled`,
     })
+    
+    console.log("-----session-----",session.url)
 
     return {
-        paymentUrl: session.url,
+        
+        paymentUrl:session.url,
     }
 }
 
