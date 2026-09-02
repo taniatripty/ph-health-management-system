@@ -6,7 +6,7 @@ import { convertToDateTime } from "./patient.utils";
 const updateProfile=async(user:IRequest,payload:IUpdatePatientProfilePayload)=>{
     const patientData=await prisma.patient.findUniqueOrThrow({
         where:{
-            id:user.userId
+            email:user.email
         },
         include:{
           patientHealthData:true,
@@ -27,7 +27,7 @@ const updateProfile=async(user:IRequest,payload:IUpdatePatientProfilePayload)=>{
 
         if(payload.patientInfo.name || payload.patientInfo.profilePhoto){
             const userData={
-                name:payload.patientInfo.name?payload.patientInfo.address:patientData.name,
+                name:payload.patientInfo.name?payload.patientInfo.name:patientData.name,
                 image:payload.patientInfo.profilePhoto?payload.patientInfo.profilePhoto:patientData.profilePhoto
             }
             await tx.user.update({
