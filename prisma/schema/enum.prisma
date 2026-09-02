@@ -25,6 +25,7 @@ enum BloodGroup {
 enum Gender {
   MALE
   FEMALE
+  OTHER
 }
 
 enum AppointmentStatus {

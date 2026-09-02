@@ -44,7 +44,8 @@ export type BloodGroup = (typeof BloodGroup)[keyof typeof BloodGroup]
 
 export const Gender = {
   MALE: 'MALE',
-  FEMALE: 'FEMALE'
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER'
 } as const
 
 export type Gender = (typeof Gender)[keyof typeof Gender]
