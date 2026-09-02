@@ -56,32 +56,104 @@ export const uploadFileToCloudinary=async(buffer:string,filename:string):Promise
 
 }
 
-export const deleteFileFromCloudinary = async (url : string) => {
+// export const deleteFileFromCloudinary = async (url : string) => {
 
+//     try {
+//         const regex = /\/v\d+\/(.+?)(?:\.[a-zA-Z0-9]+)+$/;
+
+//         const match = url.match(regex);
+
+//         if (match && match[1]) {
+//             const publicId = match[1];
+
+//             await cloudinary.uploader.destroy(
+//                 publicId, {
+//                 resource_type: "image"
+//             }
+//             )
+
+//             console.log(`File ${publicId} deleted from cloudinary`);
+//         }
+
+//     } catch (error) {
+//         console.error("Error deleting file from Cloudinary:", error);
+//         throw new Error( "Failed to delete file from Cloudinary",{
+//           cause:error
+//         });
+//     }
+// }
+
+export const deleteFileFromCloudinary = async (url: string) => {
     try {
-        const regex = /\/v\d+\/(.+?)(?:\.[a-zA-Z0-9]+)+$/;
-
-        const match = url.match(regex);
-
-        if (match && match[1]) {
-            const publicId = match[1];
-
-            await cloudinary.uploader.destroy(
-                publicId, {
-                resource_type: "image"
-            }
-            )
-
-            console.log(`File ${publicId} deleted from cloudinary`);
+        if (!url) {
+            throw new Error("Cloudinary URL is required");
         }
 
+        const urlObject = new URL(url);
+
+        const pathname = urlObject.pathname;
+
+        // Example:
+        // /image/upload/v123456/ph-healcare/images/file.jpg
+        // /raw/upload/v123456/ph-healcare/pdfs/file.pdf
+
+        const resourceType = pathname.includes("/raw/upload/")
+            ? "raw"
+            : "image";
+
+        const uploadMarker = `/${resourceType}/upload/`;
+
+        const uploadIndex = pathname.indexOf(uploadMarker);
+
+        if (uploadIndex === -1) {
+            throw new Error("Invalid Cloudinary URL");
+        }
+
+        let publicId = pathname.substring(
+            uploadIndex + uploadMarker.length
+        );
+
+        // Remove version
+        publicId = publicId.replace(/^v\d+\//, "");
+
+        // Remove extension
+        publicId = publicId.replace(/\.[^/.]+$/, "");
+
+        console.log("Deleting Cloudinary file:");
+        console.log("publicId:", publicId);
+        console.log("resourceType:", resourceType);
+
+        const result = await cloudinary.uploader.destroy(
+            publicId,
+            {
+                resource_type: resourceType
+            }
+        );
+
+        console.log("Cloudinary delete result:", result);
+
+        if (result.result !== "ok" && result.result !== "not found") {
+            throw new Error(
+                `Cloudinary deletion failed: ${result.result}`
+            );
+        }
+
+        return result;
+
     } catch (error) {
-        console.error("Error deleting file from Cloudinary:", error);
-        throw new Error( "Failed to delete file from Cloudinary",{
-          cause:error
-        });
+        console.error(
+            "Error deleting file from Cloudinary:",
+            error
+        );
+
+        throw new Error(
+            "Failed to delete file from Cloudinary",
+            {
+                cause: error
+            }
+        );
     }
-}
+};
 
 
 
