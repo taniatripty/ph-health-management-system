@@ -406,6 +406,7 @@ export const ModelName = {
   Doctor: 'Doctor',
   MedicalReport: 'MedicalReport',
   Patient: 'Patient',
+  PatientHealthData: 'PatientHealthData',
   Payment: 'Payment',
   Schedule: 'Schedule',
   DoctorSchedule: 'DoctorSchedule',
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "admin" | "appointment" | "user" | "session" | "account" | "verification" | "doctor" | "medicalReport" | "patient" | "payment" | "schedule" | "doctorSchedule" | "speciality" | "doctorSpecialty"
+    modelProps: "admin" | "appointment" | "user" | "session" | "account" | "verification" | "doctor" | "medicalReport" | "patient" | "patientHealthData" | "payment" | "schedule" | "doctorSchedule" | "speciality" | "doctorSpecialty"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1096,6 +1097,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PatientHealthData: {
+      payload: Prisma.$PatientHealthDataPayload<ExtArgs>
+      fields: Prisma.PatientHealthDataFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PatientHealthDataFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PatientHealthDataFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload>
+        }
+        findFirst: {
+          args: Prisma.PatientHealthDataFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PatientHealthDataFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload>
+        }
+        findMany: {
+          args: Prisma.PatientHealthDataFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload>[]
+        }
+        create: {
+          args: Prisma.PatientHealthDataCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload>
+        }
+        createMany: {
+          args: Prisma.PatientHealthDataCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PatientHealthDataCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload>[]
+        }
+        delete: {
+          args: Prisma.PatientHealthDataDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload>
+        }
+        update: {
+          args: Prisma.PatientHealthDataUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload>
+        }
+        deleteMany: {
+          args: Prisma.PatientHealthDataDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PatientHealthDataUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PatientHealthDataUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload>[]
+        }
+        upsert: {
+          args: Prisma.PatientHealthDataUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PatientHealthDataPayload>
+        }
+        aggregate: {
+          args: Prisma.PatientHealthDataAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePatientHealthData>
+        }
+        groupBy: {
+          args: Prisma.PatientHealthDataGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PatientHealthDataGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PatientHealthDataCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PatientHealthDataCountAggregateOutputType> | number
+        }
+      }
+    }
     Payment: {
       payload: Prisma.$PaymentPayload<ExtArgs>
       fields: Prisma.PaymentFieldRefs
@@ -1653,6 +1728,32 @@ export const PatientScalarFieldEnum = {
 export type PatientScalarFieldEnum = (typeof PatientScalarFieldEnum)[keyof typeof PatientScalarFieldEnum]
 
 
+export const PatientHealthDataScalarFieldEnum = {
+  id: 'id',
+  gender: 'gender',
+  dateOfBirth: 'dateOfBirth',
+  bloodGroup: 'bloodGroup',
+  hasAllergies: 'hasAllergies',
+  hasDiabetes: 'hasDiabetes',
+  height: 'height',
+  weight: 'weight',
+  smokingStatus: 'smokingStatus',
+  dietaryPreferences: 'dietaryPreferences',
+  pregnancyStatus: 'pregnancyStatus',
+  mentalHealthHistory: 'mentalHealthHistory',
+  immunizationStatus: 'immunizationStatus',
+  hasPastSurgeries: 'hasPastSurgeries',
+  recentAnxiety: 'recentAnxiety',
+  recentDepression: 'recentDepression',
+  maritalStatus: 'maritalStatus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  patientId: 'patientId'
+} as const
+
+export type PatientHealthDataScalarFieldEnum = (typeof PatientHealthDataScalarFieldEnum)[keyof typeof PatientHealthDataScalarFieldEnum]
+
+
 export const PaymentScalarFieldEnum = {
   id: 'id',
   amount: 'amount',
@@ -1894,6 +1995,20 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'BloodGroup'
+ */
+export type EnumBloodGroupFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BloodGroup'>
+    
+
+
+/**
+ * Reference to a field of type 'BloodGroup[]'
+ */
+export type ListEnumBloodGroupFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BloodGroup[]'>
+    
+
+
+/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -2066,6 +2181,7 @@ export type GlobalOmitConfig = {
   doctor?: Prisma.DoctorOmit
   medicalReport?: Prisma.MedicalReportOmit
   patient?: Prisma.PatientOmit
+  patientHealthData?: Prisma.PatientHealthDataOmit
   payment?: Prisma.PaymentOmit
   schedule?: Prisma.ScheduleOmit
   doctorSchedule?: Prisma.DoctorScheduleOmit

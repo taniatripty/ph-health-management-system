@@ -87,6 +87,11 @@ export type MedicalReport = Prisma.MedicalReportModel
  */
 export type Patient = Prisma.PatientModel
 /**
+ * Model PatientHealthData
+ * 
+ */
+export type PatientHealthData = Prisma.PatientHealthDataModel
+/**
  * Model Payment
  * 
  */
