@@ -13,6 +13,7 @@ model Patient {
    appointment Appointment[]
    patientHealthData PatientHealthData?
    medicalReports MedicalReport[]
+   reviews Review[]
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([email], name: "idx_patient_email")

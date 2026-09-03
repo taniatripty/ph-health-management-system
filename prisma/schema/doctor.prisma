@@ -20,6 +20,7 @@ model Doctor {
   userId              String            @unique
   specialties         DoctorSpecialty[]
   appointment Appointment[]
+  reviews Review[]
   doctorSchedule      DoctorSchedule[]
   user                User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
