@@ -1911,6 +1911,7 @@ export const PaymentScalarFieldEnum = {
   stripeEventId: 'stripeEventId',
   status: 'status',
   paymentGatewayData: 'paymentGatewayData',
+  invoiceUrl: 'invoiceUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   appointmentId: 'appointmentId'
@@ -1921,7 +1922,7 @@ export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeo
 
 export const PrescriptionScalarFieldEnum = {
   id: 'id',
-  followDate: 'followDate',
+  followUpDate: 'followUpDate',
   instruction: 'instruction',
   pdfurl: 'pdfurl',
   createdAt: 'createdAt',

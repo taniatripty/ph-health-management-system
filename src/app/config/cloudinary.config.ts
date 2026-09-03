@@ -12,7 +12,7 @@ cloudinary.config({
   api_secret: envVars.CLOUDINARY_API_SECRET,
 });
 
-export const uploadFileToCloudinary=async(buffer:string,filename:string):Promise<UploadApiResponse>=>{
+export const uploadFileToCloudinary=async(buffer:Buffer,filename:string):Promise<UploadApiResponse>=>{
  if(!buffer || !filename){
   throw new Error("file is not found")
  }
@@ -56,32 +56,7 @@ export const uploadFileToCloudinary=async(buffer:string,filename:string):Promise
 
 }
 
-// export const deleteFileFromCloudinary = async (url : string) => {
 
-//     try {
-//         const regex = /\/v\d+\/(.+?)(?:\.[a-zA-Z0-9]+)+$/;
-
-//         const match = url.match(regex);
-
-//         if (match && match[1]) {
-//             const publicId = match[1];
-
-//             await cloudinary.uploader.destroy(
-//                 publicId, {
-//                 resource_type: "image"
-//             }
-//             )
-
-//             console.log(`File ${publicId} deleted from cloudinary`);
-//         }
-
-//     } catch (error) {
-//         console.error("Error deleting file from Cloudinary:", error);
-//         throw new Error( "Failed to delete file from Cloudinary",{
-//           cause:error
-//         });
-//     }
-// }
 
 export const deleteFileFromCloudinary = async (url: string) => {
     try {

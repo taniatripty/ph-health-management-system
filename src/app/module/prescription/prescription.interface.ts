@@ -1,6 +1,6 @@
 export interface ICreatePrescriptionPayload {
     appointmentId: string;
-    followDate: Date;
+    followUpDate: Date;
     instructions: string;
 }
 
