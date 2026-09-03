@@ -14,7 +14,7 @@ const giveReviews = catchAsync(async (req , res) => {
     res,
     statusCode: 201,
     success: true,
-    message: "book appointment successfully",
+    message: "give review successfully",
     data: result,
   });
 });
