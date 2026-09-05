@@ -19,3 +19,4 @@ export interface IChangeUserRolePayload {
     userId : string;
     role : Role;
 }
+

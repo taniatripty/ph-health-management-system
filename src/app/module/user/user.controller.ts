@@ -20,6 +20,23 @@ const createDoctor = catchAsync(
   }
 );
 
+const createAdmin = catchAsync(
+  async (req: Request, res: Response) => {
+    const payload = req.body;
+
+    const result = await userServices.createAdmin(payload);
+
+    sendResponse({
+      res,
+      statusCode: status.CREATED,
+      success: true,
+      message: "Admin registered successfully",
+      data: result,
+    });
+  }
+);
+
 export const UserController = {
   createDoctor,
+  createAdmin
 };
