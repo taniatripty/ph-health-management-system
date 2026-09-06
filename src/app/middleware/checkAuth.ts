@@ -5,6 +5,8 @@ import { envVars } from "../config/env";
 import { prisma } from "../lib/prisma";
 import { cookieUtils } from "../utlis/cookie";
 import { jwtutils } from "../utlis/jwt";
+import AppError from "../errorhelper/AppError";
+import status from "http-status";
 
 
 export const checkAuth =
@@ -101,7 +103,7 @@ export const checkAuth =
       );
 
       if (!accessToken) {
-        throw new Error(
+        throw new AppError(status.UNAUTHORIZED,
           "Unauthorized access! No access token provided."
         );
       }
@@ -115,7 +117,7 @@ export const checkAuth =
       );
 
       if (!verifiedToken.success) {
-        throw new Error(
+        throw new AppError(status.UNAUTHORIZED,
           "Unauthorized access! Invalid access token."
         );
       }
@@ -127,7 +129,7 @@ export const checkAuth =
         authRoles.length > 0 &&
         !authRoles.includes(verifiedToken.data!.role as Role)
       ) {
-        throw new Error(
+        throw new AppError(status.FORBIDDEN,
           "Forbidden access! You do not have permission to access this resource."
         );
       }
