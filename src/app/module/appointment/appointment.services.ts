@@ -6,6 +6,8 @@ import {v7 as uuidv7} from "uuid"
 import { stripe } from "../../config/stripe.config";
 import { envVars } from "../../config/env";
 import { AppointmentStatus, PaymentStatus } from "../../../generated/prisma/enums";
+import AppError from "../../errorhelper/AppError";
+import status from "http-status";
 
 const bookAppointment=async(user:IRequest, payload:IBookAppointmentPayload)=>{
 
@@ -202,19 +204,19 @@ const initiatePayment = async (appointmentId: string, user : IRequest) => {
     });
 
     if(!appointmentData){
-        throw new Error( "Appointment not found");
+        throw new AppError( status.NOT_FOUND,"Appointment not found");
     }
 
     if(!appointmentData.payment){
-        throw new Error("Payment data not found for this appointment");
+        throw new AppError( status.NOT_FOUND, "Payment data not found for this appointment");
     }
 
     if(appointmentData.paymentStatus === PaymentStatus.PAID){
-        throw new Error( "Payment already completed for this appointment");
+        throw new AppError( status.BAD_REQUEST, "Payment already completed for this appointment");
     };
 
     if(appointmentData.status === AppointmentStatus.CANCELED){
-        throw new Error( "Appointment is canceled");
+        throw new AppError( status.BAD_REQUEST ,"Appointment is canceled");
     }
 
     const session = await stripe.checkout.sessions.create({

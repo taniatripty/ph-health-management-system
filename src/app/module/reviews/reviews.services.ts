@@ -1,4 +1,6 @@
+import status from "http-status";
 import { PaymentStatus } from "../../../generated/prisma/enums";
+import AppError from "../../errorhelper/AppError";
 import { IRequest } from "../../interface/requestuser.interface";
 import { prisma } from "../../lib/prisma";
 import { ICreateReviewPayload } from "./reviews.interface";
@@ -15,10 +17,10 @@ const giveReview=async(user:IRequest,payload:ICreateReviewPayload)=>{
         }
     })
     if(appointmentData.paymentStatus ! === PaymentStatus.PAID){
-        throw new Error ("you can give review after payment is done")
+        throw new AppError (status.BAD_REQUEST,"you can give review after payment is done")
     }
     if(appointmentData.patientId===patientData.id){
-        throw new Error ("you can give review only rour own appointment")
+        throw new AppError (status.BAD_REQUEST, "you can give review only rour own appointment")
     }
     const isReview=await prisma.review.findFirst({
         where:{
@@ -26,7 +28,7 @@ const giveReview=async(user:IRequest,payload:ICreateReviewPayload)=>{
         }
     })
      if (isReview) {
-        throw new Error( "You have already reviewed for this appointment. You can update your review instead.");
+        throw new AppError( status.BAD_REQUEST,"You have already reviewed for this appointment. You can update your review instead.");
     };
     const result=await prisma.$transaction(async(tx)=>{
         const review=await tx.review.create({

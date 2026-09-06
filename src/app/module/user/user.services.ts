@@ -3,6 +3,8 @@ import { Role, Speciality } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { ICreateAdminPayload, ICreateDoctorPayload } from "./user.interface";
 import { auth } from "../../lib/auth";
+import AppError from "../../errorhelper/AppError";
+import status from "http-status";
 
 const createDoctor = async (payload: ICreateDoctorPayload) => {
   const specialities: Speciality[] = [];
@@ -32,7 +34,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
   });
 
   if (userExist) {
-    throw new Error("User already exists");
+    throw new AppError(status.BAD_REQUEST,"User already exists");
   }
 
   // Create Better Auth user
@@ -47,7 +49,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
   });
 
   if (!userdata.user) {
-    throw new Error("Failed to create user");
+    throw new AppError(status.NOT_FOUND,"Failed to create user");
   }
 
   try {
@@ -151,7 +153,7 @@ const createAdmin = async (payload: ICreateAdminPayload) => {
     })
 
     if (userExists) {
-        throw new Error( "User with this email already exists");
+        throw new AppError( status.BAD_REQUEST,"User with this email already exists");
     }
 
     const { admin, role, password } = payload;

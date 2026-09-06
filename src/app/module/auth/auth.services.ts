@@ -9,6 +9,8 @@ import { prisma } from "../../lib/prisma";
 import { jwtutils } from "../../utlis/jwt";
 import { tokenUtils } from "../../utlis/token";
 import { IChangePasswordPayload } from "./auth.interface";
+import AppError from "../../errorhelper/AppError";
+import status from "http-status";
 
 
 type RegisterUserPayload = {
@@ -34,7 +36,7 @@ const registerUser = async (payload: RegisterUserPayload) => {
   });
 
   if (!data.user){
-throw new Error ("failed to register patient")
+throw new AppError( status.BAD_REQUEST,"failed to register patient")
   }
 
  try {
@@ -104,7 +106,7 @@ const loginUser = async (payload: LoginUserPayload) => {
   });
 
   if(data.user.status==UserStatus.BLOCKED){
-    throw new Error("user is blocked")
+    throw new AppError(status.FORBIDDEN,"user is blocked")
   }
 
    const accessToken =tokenUtils.getAccessToken({
@@ -148,7 +150,7 @@ const getme=async(user:IRequest)=>{
     }
   })
   if(!existUser){
-    throw new Error(`user is not exist`)
+    throw new AppError( status.BAD_REQUEST,`user is not exist`)
   }
 return existUser
 
@@ -164,13 +166,13 @@ const getnewToken=async(refreshToken:string,sessionToken:string)=>{
     }
   })
   if(!sessionTokenExists){
-    throw new Error(`user is not exists`)
+    throw new AppError(status.NOT_FOUND,`user is not exists`)
   }
 
   
   const varifyRefreshToken= jwtutils.verifyToken(refreshToken,envVars.REFRESH_TOKEN_SECRET)
   if(!varifyRefreshToken.success && varifyRefreshToken.error){
-    throw new Error(`invalid refresh token`)
+    throw new AppError(status.BAD_REQUEST,`invalid refresh token`)
   }
  const data=  varifyRefreshToken.data as JwtPayload
    const newaccessToken =tokenUtils.getAccessToken({
@@ -223,7 +225,7 @@ const changePassword = async (payload : IChangePasswordPayload, sessionToken : s
     })
 
     if(!session){
-        throw new Error( "Invalid session token");
+        throw new AppError( status.BAD_REQUEST,"Invalid session token");
     }
 
     const {currentPassword, newPassword} = payload;
@@ -316,15 +318,15 @@ const forgetPassword=async(email:string)=>{
     }
   })
   if(!isExistsuser){
-    throw new Error("user is not found")
+    throw new AppError(status.NOT_FOUND,"user is not found")
 
   }
     if(!isExistsuser.emailVerified){
-        throw new Error( "Email not verified");
+        throw new AppError( status.BAD_REQUEST,"Email not verified");
     }
 
     if(isExistsuser.isDeleted || isExistsuser.status === UserStatus.DELETED){
-        throw new Error("User not found"); 
+        throw new AppError(status.NOT_FOUND,"User not found"); 
     }
 
     await auth.api.requestPasswordResetEmailOTP({
@@ -341,15 +343,15 @@ const resetPassword=async(email:string,otp:string,newPassword:string)=>{
     }
   })
   if(!isExistsuser){
-    throw new Error("user is not found")
+    throw new AppError(status.NOT_FOUND,"user is not found")
 
   }
     if(!isExistsuser.emailVerified){
-        throw new Error( "Email not verified");
+        throw new AppError( status.BAD_REQUEST,"Email not verified");
     }
 
     if(isExistsuser.isDeleted || isExistsuser.status === UserStatus.DELETED){
-        throw new Error("User not found"); 
+        throw new AppError(status.BAD_REQUEST,"User not found"); 
     }
 
     await auth.api.resetPasswordEmailOTP({

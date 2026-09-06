@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import status from "http-status";
 import { uploadFileToCloudinary } from "../../config/cloudinary.config";
+import AppError from "../../errorhelper/AppError";
 import { IRequest } from "../../interface/requestuser.interface";
 import { prisma } from "../../lib/prisma";
 import { sendEmail } from "../../utlis/email";
@@ -35,7 +37,7 @@ const givePrescription = async (user : IRequest, payload : ICreatePrescriptionPa
     });
 
     if(appointmentData.doctorId !== doctorData.id){
-        throw new Error( "You can only give prescription for your own appointments");
+        throw new AppError(status.BAD_REQUEST, "You can only give prescription for your own appointments");
     }
 
     const isAlreadyPrescribed = await prisma.prescription.findFirst({
@@ -45,7 +47,7 @@ const givePrescription = async (user : IRequest, payload : ICreatePrescriptionPa
     });
 
     if (isAlreadyPrescribed) {
-        throw new Error( "You have already given prescription for this appointment. You can update the prescription instead.");
+        throw new AppError(status.BAD_REQUEST, "You have already given prescription for this appointment. You can update the prescription instead.");
     }
 
     const followUpDate = new Date(payload.followUpDate);
