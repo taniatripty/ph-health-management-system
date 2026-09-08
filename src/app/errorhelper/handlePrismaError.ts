@@ -239,3 +239,383 @@ export const handlerPrismaClientRustPanicError = () : TErrorResponse => {
     }
 }
 
+// import status from "http-status";
+// import { Prisma } from "../../generated/prisma/client";
+// import {
+//     TErrorResponse,
+// } from "../interface/error.interface";
+
+// /**
+//  * Get HTTP status code from Prisma error code
+//  */
+// const getPrismaStatusCode = (code: string): number => {
+//     const statusMap: Record<string, number> = {
+
+//         // -------------------------
+//         // Constraint / Validation
+//         // -------------------------
+
+//         P2002: status.CONFLICT,
+//         P2003: status.CONFLICT,
+//         P2004: status.BAD_REQUEST,
+//         P2005: status.BAD_REQUEST,
+//         P2006: status.BAD_REQUEST,
+//         P2007: status.BAD_REQUEST,
+
+//         // -------------------------
+//         // Record / Relation
+//         // -------------------------
+
+//         P2025: status.NOT_FOUND,
+//         P2015: status.NOT_FOUND,
+//         P2018: status.NOT_FOUND,
+
+//         P2014: status.CONFLICT,
+
+//         P2011: status.BAD_REQUEST,
+//         P2012: status.BAD_REQUEST,
+//         P2013: status.BAD_REQUEST,
+
+//         // -------------------------
+//         // Database / Connection
+//         // -------------------------
+
+//         P2024: status.SERVICE_UNAVAILABLE,
+//         P2037: status.SERVICE_UNAVAILABLE,
+
+//         P2034: status.CONFLICT,
+
+//         // -------------------------
+//         // Prisma Accelerate
+//         // -------------------------
+
+//         P6003: status.PAYMENT_REQUIRED,
+//         P6004: status.GATEWAY_TIMEOUT,
+//         P6008: status.SERVICE_UNAVAILABLE,
+//         P6009: status.PAYLOAD_TOO_LARGE,
+//         P6010: status.SERVICE_UNAVAILABLE,
+
+//         // -------------------------
+//         // Rate limit
+//         // -------------------------
+
+//         P5011: status.TOO_MANY_REQUESTS,
+//     };
+
+//     return statusMap[code] ?? status.INTERNAL_SERVER_ERROR;
+// };
+
+
+// /**
+//  * Get actual field/path from Prisma meta
+//  *
+//  * Prisma may return:
+//  *
+//  * target: ["email"]
+//  * target: ["doctorId", "scheduleId"]
+//  * field_name: "userId"
+//  * column_name: "email"
+//  * model_name: "User"
+//  * relation_name: "UserToDoctor"
+//  */
+// const getPrismaErrorPath = (
+//     error: Prisma.PrismaClientKnownRequestError
+// ): string => {
+
+//     const meta = error.meta;
+
+//     // P2002
+//     // Example:
+//     // target: ["email"]
+//     // target: ["doctorId", "scheduleId"]
+//     if (Array.isArray(meta?.target)) {
+//         return meta.target.join(".");
+//     }
+
+//     // Some Prisma errors provide field_name
+//     if (typeof meta?.field_name === "string") {
+//         return meta.field_name;
+//     }
+
+//     // Some errors may provide column_name
+//     if (typeof meta?.column_name === "string") {
+//         return meta.column_name;
+//     }
+
+//     // If Prisma provides a model name
+//     if (typeof meta?.model_name === "string") {
+//         return meta.model_name;
+//     }
+
+//     // If Prisma provides relation name
+//     if (typeof meta?.relation_name === "string") {
+//         return meta.relation_name;
+//     }
+
+//     return "database";
+// };
+
+
+// /**
+//  * Get a clean API message from Prisma error
+//  */
+// const getPrismaErrorMessage = (
+//     error: Prisma.PrismaClientKnownRequestError
+// ): {
+//     message: string;
+//     path: string;
+// } => {
+
+//     const path = getPrismaErrorPath(error);
+
+//     switch (error.code) {
+
+//         // -------------------------
+//         // Unique Constraint
+//         // -------------------------
+
+//         case "P2002": {
+//             return {
+//                 message: `${path} already exists.`,
+//                 path,
+//             };
+//         }
+
+//         // -------------------------
+//         // Foreign Key Constraint
+//         // -------------------------
+
+//         case "P2003": {
+//             return {
+//                 message: `The related record for ${path} does not exist.`,
+//                 path,
+//             };
+//         }
+
+//         // -------------------------
+//         // Null Constraint
+//         // -------------------------
+
+//         case "P2011": {
+//             return {
+//                 message: `${path} cannot be null.`,
+//                 path,
+//             };
+//         }
+
+//         // -------------------------
+//         // Required Relation
+//         // -------------------------
+
+//         case "P2014": {
+//             return {
+//                 message: `The required relationship for ${path} is invalid.`,
+//                 path,
+//             };
+//         }
+
+//         // -------------------------
+//         // Record Not Found
+//         // -------------------------
+
+//         case "P2015":
+//         case "P2018":
+//         case "P2025": {
+//             return {
+//                 message: "The requested record was not found.",
+//                 path,
+//             };
+//         }
+
+//         // -------------------------
+//         // Database Connection
+//         // -------------------------
+
+//         case "P2024": {
+//             return {
+//                 message:
+//                     "The database is temporarily unavailable. Please try again later.",
+//                 path: "database",
+//             };
+//         }
+
+//         // -------------------------
+//         // Transaction Conflict
+//         // -------------------------
+
+//         case "P2034": {
+//             return {
+//                 message:
+//                     "The operation could not be completed because of a transaction conflict.",
+//                 path: "transaction",
+//             };
+//         }
+
+//         // -------------------------
+//         // Too Many Connections
+//         // -------------------------
+
+//         case "P2037": {
+//             return {
+//                 message:
+//                     "The database is temporarily unavailable. Please try again later.",
+//                 path: "database",
+//             };
+//         }
+
+//         // -------------------------
+//         // Prisma Accelerate
+//         // -------------------------
+
+//         case "P6003": {
+//             return {
+//                 message:
+//                     "The database service plan limit has been exceeded.",
+//                 path: "database",
+//             };
+//         }
+
+//         case "P6004": {
+//             return {
+//                 message: "The database request timed out.",
+//                 path: "database",
+//             };
+//         }
+
+//         case "P6009": {
+//             return {
+//                 message: "The database response was too large.",
+//                 path: "database",
+//             };
+//         }
+
+//         // -------------------------
+//         // Default
+//         // -------------------------
+
+//         default: {
+//             return {
+//                 message: "A database operation failed.",
+//                 path,
+//             };
+//         }
+//     }
+// };
+
+
+// /**
+//  * Prisma Known Request Error
+//  */
+// export const handlePrismaClientKnownRequestError = (
+//     error: Prisma.PrismaClientKnownRequestError
+// ): TErrorResponse => {
+
+//     const statusCode = getPrismaStatusCode(error.code);
+
+//     const { message, path } = getPrismaErrorMessage(error);
+
+//     return {
+//         success: false,
+//         statusCode,
+//         message,
+//         errorSources: [
+//             {
+//                 path,
+//                 message,
+//             },
+//         ],
+//     };
+// };
+
+
+// /**
+//  * Prisma Unknown Request Error
+//  */
+// export const handlePrismaClientUnknownError = (
+//     _error: Prisma.PrismaClientUnknownRequestError
+// ): TErrorResponse => {
+
+//     const message = "An unexpected database error occurred.";
+
+//     return {
+//         success: false,
+//         statusCode: status.INTERNAL_SERVER_ERROR,
+//         message,
+//         errorSources: [
+//             {
+//                 path: "database",
+//                 message,
+//             },
+//         ],
+//     };
+// };
+
+
+// /**
+//  * Prisma Validation Error
+//  */
+// export const handlePrismaClientValidationError = (
+//     _error: Prisma.PrismaClientValidationError
+// ): TErrorResponse => {
+
+//     const message = "Invalid data provided for the database operation.";
+
+//     return {
+//         success: false,
+//         statusCode: status.BAD_REQUEST,
+//         message,
+//         errorSources: [
+//             {
+//                 path: "database",
+//                 message,
+//             },
+//         ],
+//     };
+// };
+
+
+// /**
+//  * Prisma Initialization Error
+//  */
+// export const handlePrismaClientInitializationError = (
+//     _error: Prisma.PrismaClientInitializationError
+// ): TErrorResponse => {
+
+//     const message = "Database service is currently unavailable.";
+
+//     return {
+//         success: false,
+//         statusCode: status.SERVICE_UNAVAILABLE,
+//         message,
+//         errorSources: [
+//             {
+//                 path: "database",
+//                 message,
+//             },
+//         ],
+//     };
+// };
+
+
+// /**
+//  * Prisma Rust Panic Error
+//  */
+// export const handlePrismaClientRustPanicError = (
+//     _error: Prisma.PrismaClientRustPanicError
+// ): TErrorResponse => {
+
+//     const message = "An unexpected database error occurred.";
+
+//     return {
+//         success: false,
+//         statusCode: status.INTERNAL_SERVER_ERROR,
+//         message,
+//         errorSources: [
+//             {
+//                 path: "database",
+//                 message,
+//             },
+//         ],
+//     };
+// };
+
