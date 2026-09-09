@@ -1,4 +1,4 @@
-import { number } from "zod";
+
 import { IQueryConfig, IQueryParams, IQueryResult, prismaCountArgs, PrismaFindManyArgs, prismaModelDelegate, PrismaNumberFilter, PrismaStringFilter, PrismaWhereConditions } from "../interface/query.interface";
 
 // T = Model Type

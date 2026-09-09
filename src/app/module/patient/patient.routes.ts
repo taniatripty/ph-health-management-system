@@ -4,8 +4,8 @@ import { multerUpload } from "../../config/multer.config";
 import { checkAuth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validationRequest";
 import { patientController } from "./patient.controller";
-import { PatientValidation } from "./patient.validation";
 import { updateProfileMiddleware } from "./patient.middleware";
+import { PatientValidation } from "./patient.validation";
 
 const router = Router();
 router.patch(
@@ -14,7 +14,8 @@ router.patch(
   multerUpload.fields([
     { name: "profilePhoto", maxCount: 1 },
     { name: "medicalReports", maxCount: 5 },
-  ]),updateProfileMiddleware,
+  ]),
+  updateProfileMiddleware,
   validateRequest(PatientValidation.updatePatientProfileZodSchema),
   patientController.updateProfile,
 );
