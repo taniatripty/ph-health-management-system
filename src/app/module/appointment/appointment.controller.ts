@@ -1,3 +1,4 @@
+import status from "http-status";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import { appointmentServices } from "./appointment.services";
@@ -16,6 +17,18 @@ const createbookappointment = catchAsync(async (req , res) => {
     message: "book appointment successfully",
     data: result,
   });
+});
+
+
+const getMyAppointments = catchAsync(async (req, res) => {
+    const user = req.user;
+    const appointments = await appointmentServices.getMyAppointments(user);
+    sendResponse({res, 
+        success: true,
+        statusCode: status.OK,
+        message: 'Appointments retrieved successfully',
+        data: appointments
+    });
 });
 
 const bookappointmentwithpaylatter = catchAsync(async (req , res) => {
@@ -51,6 +64,7 @@ const initiatePayment = catchAsync(async (req , res) => {
 });
 export const appointmentController={
 createbookappointment,
+getMyAppointments,
 bookappointmentwithpaylatter,
 initiatePayment
 }

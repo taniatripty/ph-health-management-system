@@ -110,6 +110,47 @@ const bookAppointment=async(user:IRequest, payload:IBookAppointmentPayload)=>{
   }
 }
 
+const getMyAppointments = async (user: IRequest) => {
+  // User can be patient or doctor, so check both
+
+  const patientData = await prisma.patient.findUnique({
+    where: {
+      email: user.email,
+    },
+  });
+
+  if (patientData) {
+    return await prisma.appointment.findMany({
+      where: {
+        patientId: patientData.id,
+      },
+      include: {
+        doctor: true,
+        schedule: true,
+      },
+    });
+  }
+
+  const doctorData = await prisma.doctor.findUnique({
+    where: {
+      email: user.email,
+    },
+  });
+
+  if (doctorData) {
+    return await prisma.appointment.findMany({
+      where: {
+        doctorId: doctorData.id,
+      },
+      include: {
+        patient: true,
+        schedule: true,
+      },
+    });
+  }
+
+  throw new Error("User not found");
+};
 
 const bookAppointmentWithPayLater = async (payload : IBookAppointmentPayload, user : IRequest) => {
     const patientData = await prisma.patient.findUniqueOrThrow({
@@ -311,6 +352,7 @@ const cancelUnpaidAppointments = async () => {
 
 export const appointmentServices={
     bookAppointment,
+    getMyAppointments,
     bookAppointmentWithPayLater,
     initiatePayment,
     cancelUnpaidAppointments
