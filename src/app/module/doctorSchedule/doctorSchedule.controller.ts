@@ -34,6 +34,18 @@ const getAllDoctorSchedules = catchAsync(async (req, res) => {
     });
 });
 
+
+const getDoctorScheduleById = catchAsync(async (req, res) => {
+    const doctorId = req.params.doctorId;
+    const scheduleId = req.params.scheduleId;
+    const doctorSchedule = await doctorScheduleServices.getDoctorScheduleById(doctorId as string, scheduleId as string);
+    sendResponse({res, 
+        success: true,
+        statusCode: status.OK,
+        message: 'Doctor schedule retrieved successfully',
+        data: doctorSchedule
+    });
+});
 const deleteDoctorSchedule = catchAsync(async (req, res) => {
     const {id}=req.params
     const user=req.user
@@ -51,5 +63,6 @@ const deleteDoctorSchedule = catchAsync(async (req, res) => {
 export const doctorScheduleContorller={
 createDoctorSchedule,
 getAllDoctorSchedules,
+getDoctorScheduleById,
 deleteDoctorSchedule
 }

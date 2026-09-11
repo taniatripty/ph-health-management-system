@@ -35,7 +35,7 @@ console.log(doctorData)
     return result
 
 }
-
+ 
 
 
 const getAllDoctorSchedules=async(query:IQueryParams)=>{
@@ -53,6 +53,23 @@ const getAllDoctorSchedules=async(query:IQueryParams)=>{
 
     return result;
 
+}
+
+
+const getDoctorScheduleById = async (doctorId: string, scheduleId: string) => {
+    const doctorSchedule = await prisma.doctorSchedule.findUnique({
+        where: {
+            scheduleId_doctorId: {
+                doctorId: doctorId,
+                scheduleId: scheduleId
+            }
+        },
+        include: {
+            schedule: true,
+            doctor: true
+        }
+    });
+    return doctorSchedule;
 }
 
 const deletedMyDoctorSchedule = async (
@@ -79,5 +96,6 @@ const deletedMyDoctorSchedule = async (
 export const doctorScheduleServices={
     createmySchedule,
     getAllDoctorSchedules,
+    getDoctorScheduleById,
     deletedMyDoctorSchedule
 }
