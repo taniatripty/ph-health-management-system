@@ -20,4 +20,10 @@ router.patch(
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   DoctorController.updateDoctor,
 );
+
+router.delete(
+  "/:id",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  DoctorController.deletedDoctor,
+);
 export const DoctorRoutes = router;

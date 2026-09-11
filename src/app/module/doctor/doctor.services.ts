@@ -2,6 +2,7 @@ import status from "http-status";
 import AppError from "../../errorhelper/AppError";
 import { prisma } from "../../lib/prisma";
 import { IUpdateDoctorPayload } from "./doctor.interface";
+import { UserStatus } from "../../../generated/prisma/enums";
 
 const getAllDoctors = async () => {
     const doctors = await prisma.doctor.findMany({
@@ -124,8 +125,50 @@ const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
     return doctor;
 }
 
+const deleteDoctor = async (id: string) => {
+    const isDoctorExist = await prisma.doctor.findUnique({
+        where: { id },
+        include: { user: true }
+    })
+
+    if (!isDoctorExist) {
+        throw new AppError(status.NOT_FOUND, "Doctor not found");
+    }
+
+    await prisma.$transaction(async (tx) => {
+        await tx.doctor.update({
+            where: { id },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(),
+            },
+        })
+
+        await tx.user.update({
+            where: { id: isDoctorExist.userId },
+            data: {
+                isDeleted : true,
+                deletedAt: new Date(),
+                status: UserStatus.DELETED // Optional: you may also want to block the user
+            },
+        })
+
+        await tx.session.deleteMany({
+            where: { userId: isDoctorExist.userId }
+        })
+
+        await tx.doctorSpecialty.deleteMany({
+            where: { doctorId: id }
+        })
+    })
+
+    return { message: "Doctor deleted successfully" };
+}
+
+
 export const DoctorService = {
     getAllDoctors,
     getDoctorById,
-    updateDoctor
+    updateDoctor,
+    deleteDoctor
 }
