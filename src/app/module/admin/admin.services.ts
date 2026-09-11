@@ -3,7 +3,52 @@ import { Role, UserStatus } from "../../../generated/prisma/enums";
 import AppError from "../../errorhelper/AppError";
 import { IRequest } from "../../interface/requestuser.interface";
 import { prisma } from "../../lib/prisma";
-import { IChangeUserRolePayload, IChangeUserStatusPayload } from "./admin.interface";
+import { IChangeUserRolePayload, IChangeUserStatusPayload, IUpdateAdminPayload } from "./admin.interface";
+
+const getAllAdmin=async()=>{
+    const result=await prisma.admin.findMany({
+        include:{
+            user:true
+        }
+    })
+    return result
+}
+const getAdminById=async(id:string)=>{
+    const result=await prisma.admin.findUnique({
+        where:{
+            id
+
+        },
+        include:{
+            user:true
+        }
+    })
+    return result
+}
+
+const updateAdmin=async(id:string,payload:IUpdateAdminPayload)=>{
+    const isExistAdmin=await prisma.admin.findUnique({
+        where:{
+            id
+        }
+    })
+    if(!isExistAdmin){
+        throw new AppError(status.NOT_FOUND,"admin is not exists")
+    }
+     const {admin}=payload
+     const updateAdmin=await prisma.admin.update({
+        where:{
+            id
+        },
+        data:{
+            ...admin
+        }
+     })
+
+     return updateAdmin
+
+}
+
 
 const changeUserStatus = async (user : IRequest, payload : IChangeUserStatusPayload ) => {
     // 1. Super admin can change the status of any user (admin, doctor, patient). Except himself. He cannot change his own status.
@@ -109,6 +154,9 @@ const changeUserRole = async (user : IRequest, payload : IChangeUserRolePayload)
 
 
 export const adminServices={
+    getAllAdmin,
+    getAdminById,
+    updateAdmin,
     changeUserStatus,
     changeUserRole
 }

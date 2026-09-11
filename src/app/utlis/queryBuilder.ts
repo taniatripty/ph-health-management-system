@@ -26,6 +26,7 @@ TInclude = Record<string, unknown>
         this.query = {
             where : {},
             include : {},
+            
             orderBy : {},
             skip : 0,
             take : 10,
