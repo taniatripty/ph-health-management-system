@@ -30,9 +30,18 @@ export interface prismaCountArgs{
 
 // }
 
+// export interface prismaModelDelegate<T = unknown> {
+//   findMany(args?: PrismaFindManyArgs): Promise<T[]>;
+//   count(args?: prismaCountArgs): Promise<number>;
+// }
 export interface prismaModelDelegate<T = unknown> {
-  findMany(args?: PrismaFindManyArgs): Promise<T[]>;
-  count(args?: prismaCountArgs): Promise<number>;
+  findMany: <A extends object>(
+    args?: A
+  ) => Promise<T[]>;
+
+  count: <A extends object>(
+    args?: A
+  ) => Promise<number>;
 }
 
 export interface IQueryParams {

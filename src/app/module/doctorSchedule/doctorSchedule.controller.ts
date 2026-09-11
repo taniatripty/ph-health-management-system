@@ -1,3 +1,5 @@
+import status from "http-status";
+import { IQueryParams } from "../../interface/query.interface";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import { doctorScheduleServices } from "./doctorSchedule.services";
@@ -20,6 +22,34 @@ const createDoctorSchedule = catchAsync(async (req , res) => {
   });
 });
 
+const getAllDoctorSchedules = catchAsync(async (req, res) => {
+    const query = req.query;
+    const result  = await doctorScheduleServices.getAllDoctorSchedules(query as IQueryParams);
+    sendResponse({res, 
+        success: true,
+        statusCode: status.OK,
+        message: 'All doctor schedules retrieved successfully',
+        data: result.data,
+        meta: result.meta
+    });
+});
+
+const deleteDoctorSchedule = catchAsync(async (req, res) => {
+    const {id}=req.params
+    const user=req.user
+  
+    await doctorScheduleServices.deletedMyDoctorSchedule(id as string, user);
+    sendResponse({res, 
+        success: true,
+        statusCode: status.OK,
+        message: ' Delete doctor schedules successfully',
+        
+       
+    });
+});
+
 export const doctorScheduleContorller={
-createDoctorSchedule
+createDoctorSchedule,
+getAllDoctorSchedules,
+deleteDoctorSchedule
 }
