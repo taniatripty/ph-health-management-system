@@ -26,28 +26,90 @@ const getAdminById=async(id:string)=>{
     return result
 }
 
-const updateAdmin=async(id:string,payload:IUpdateAdminPayload)=>{
-    const isExistAdmin=await prisma.admin.findUnique({
-        where:{
-            id
+const updateAdmin = async (
+  id: string,
+  payload: IUpdateAdminPayload
+) => {
+  const isExistAdmin = await prisma.admin.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!isExistAdmin) {
+    throw new AppError(
+      status.NOT_FOUND,
+      "Admin does not exist"
+    );
+  }
+
+  const update = await prisma.admin.update({
+    where: {
+      id,
+    },
+    data: {
+      ...payload.admin,
+    },
+  });
+
+  console.log("After update:", update);
+
+  return update;
+};
+
+const deleteAdmin = async (id: string, user : IRequest) => {
+    //TODO: Validate who is deleting the admin user. Only super admin can delete admin user and only super admin can delete super admin user but admin user cannot delete super admin user
+
+
+    const isAdminExist = await prisma.admin.findUnique({
+        where: {
+            id,
         }
     })
-    if(!isExistAdmin){
-        throw new AppError(status.NOT_FOUND,"admin is not exists")
+
+    if (!isAdminExist) {
+        throw new AppError(status.NOT_FOUND, "Admin Or Super Admin not found");
     }
-     const {admin}=payload
-     const updateAdmin=await prisma.admin.update({
-        where:{
-            id
-        },
-        data:{
-            ...admin
-        }
-     })
 
-     return updateAdmin
+    if(isAdminExist.id === user.userId){
+        throw new AppError(status.BAD_REQUEST, "You cannot delete yourself");
+    }
 
+    const result = await prisma.$transaction(async (tx) => {
+        await tx.admin.update({
+            where: { id },
+            data: {
+                isDeleted: true,
+                DeletedAt: new Date(),
+            },
+        })
+
+        await tx.user.update({
+            where: { id: isAdminExist.userId },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(),
+                status: UserStatus.DELETED // Optional: you may also want to block the user
+            },
+        })
+
+        await tx.session.deleteMany({
+            where: { userId: isAdminExist.userId }
+        })
+
+        await tx.account.deleteMany({
+            where: { userId: isAdminExist.userId }
+        })
+
+        const admin = await getAdminById(id);
+
+        return admin;
+    }
+    )
+
+    return result;
 }
+
 
 
 const changeUserStatus = async (user : IRequest, payload : IChangeUserStatusPayload ) => {
@@ -157,6 +219,7 @@ export const adminServices={
     getAllAdmin,
     getAdminById,
     updateAdmin,
+    deleteAdmin,
     changeUserStatus,
     changeUserRole
 }

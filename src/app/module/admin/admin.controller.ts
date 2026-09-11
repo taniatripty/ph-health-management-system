@@ -1,3 +1,4 @@
+import status from "http-status";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import { adminServices } from "./admin.services";
@@ -28,6 +29,9 @@ const getAdminById = catchAsync(async (req, res) => {
 const updateAdmin = catchAsync(async (req, res) => {
   const { id } = req.params;
   const payload = req.body;
+  console.log(payload)
+  console.log(id)
+
   const result = await adminServices.updateAdmin(id as string, payload);
   sendResponse({
     res,
@@ -37,6 +41,25 @@ const updateAdmin = catchAsync(async (req, res) => {
     data: result,
   });
 });
+ 
+
+
+const deleteAdmin = catchAsync(
+    async (req, res) => {
+        const { id } = req.params;
+        const user = req.user;
+
+        const result = await adminServices.deleteAdmin(id as string, user);
+
+        sendResponse({res, 
+            statusCode: status.OK,
+            success: true,
+            message: "Admin deleted successfully",
+            data: result,
+        })
+    }
+
+)
 
 const changeUserStatus = catchAsync(async (req, res) => {
   const payload = req.body;
@@ -74,6 +97,7 @@ export const adminController = {
   getAllAdmin,
   getAdminById,
   updateAdmin,
+  deleteAdmin,
   changeUserStatus,
   changeUserRole,
 };
