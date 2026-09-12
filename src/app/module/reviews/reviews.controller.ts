@@ -19,6 +19,55 @@ const giveReviews = catchAsync(async (req , res) => {
   });
 });
 
+const getAllReviews = catchAsync(async (req , res) => {
+  
+
+  
+  const result = await reviewServices.getAllReviews();
+
+  sendResponse({
+    res,
+    statusCode: 201,
+    success: true,
+    message: "Get all review successfully",
+    data: result,
+  });
+});
+
+const getMyReviews = catchAsync(async (req , res) => {
+  
+
+  const user=req.user
+  const result = await reviewServices.myReviews(user);
+
+  sendResponse({
+    res,
+    statusCode: 201,
+    success: true,
+    message: "Get my  all review successfully",
+    data: result,
+  });
+});
+
+const deleteReviews = catchAsync(async (req , res) => {
+  
+
+  const user=req.user
+   const reviewId = req.params.id;
+  const result = await reviewServices.deleteReview(user,reviewId as string);
+
+  sendResponse({
+    res,
+    statusCode: 201,
+    success: true,
+    message: "Get my  all review successfully",
+    data: result,
+  });
+});
+
 export const reviewController={
-    giveReviews
+    giveReviews,
+    getAllReviews,
+    getMyReviews,
+    deleteReviews
 }

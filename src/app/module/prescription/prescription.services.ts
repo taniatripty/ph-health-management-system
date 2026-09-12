@@ -132,6 +132,7 @@ const givePrescription = async (user : IRequest, payload : ICreatePrescriptionPa
 };
 
 
+
 export const prescriptionServices={
     givePrescription
 }
