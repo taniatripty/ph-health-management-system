@@ -1,3 +1,4 @@
+import status from "http-status";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import { reviewServices } from "./reviews.services";
@@ -49,6 +50,22 @@ const getMyReviews = catchAsync(async (req , res) => {
   });
 });
 
+const updateReviews = catchAsync(async (req , res) => {
+  const user=req.user
+   const reviewId = req.params.id;
+   const payload = req.body;
+  const result = await reviewServices.updateReview(user,reviewId as string,payload);
+
+  sendResponse({
+    res,
+    statusCode:status.OK,
+    success: true,
+    message: "Update review successfully",
+    data: result,
+  });
+});
+
+
 const deleteReviews = catchAsync(async (req , res) => {
   
 
@@ -58,9 +75,9 @@ const deleteReviews = catchAsync(async (req , res) => {
 
   sendResponse({
     res,
-    statusCode: 201,
+    statusCode:status.OK,
     success: true,
-    message: "Get my  all review successfully",
+    message: "Delete review successfully",
     data: result,
   });
 });
@@ -69,5 +86,6 @@ export const reviewController={
     giveReviews,
     getAllReviews,
     getMyReviews,
+    updateReviews,
     deleteReviews
 }
