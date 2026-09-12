@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import status from "http-status";
-import { uploadFileToCloudinary } from "../../config/cloudinary.config";
+import { deleteFileFromCloudinary, uploadFileToCloudinary } from "../../config/cloudinary.config";
 import AppError from "../../errorhelper/AppError";
 import { IRequest } from "../../interface/requestuser.interface";
 import { prisma } from "../../lib/prisma";
@@ -132,7 +132,68 @@ const givePrescription = async (user : IRequest, payload : ICreatePrescriptionPa
 };
 
 
+const getAllPrescriptions = async () => {
+    const result = await prisma.prescription.findMany({
+        include: {
+            patient: true,
+            doctor: true,
+            appointment: true,
+        }
+    })
+
+    return result;
+};
+
+const deletePrescription = async (user: IRequest, prescriptionId: string): Promise<void> => {
+    // Verify user exists
+    const isUserExists = await prisma.user.findUnique({
+        where: {
+            email: user?.email
+        }
+    });
+
+    if (!isUserExists) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    // Fetch prescription data
+    const prescriptionData = await prisma.prescription.findUniqueOrThrow({
+        where: {
+            id: prescriptionId
+        },
+        include: {
+            doctor: true
+        }
+    });
+
+    // Verify the user is the doctor for this prescription
+    if (!(user?.email === prescriptionData.doctor.email)) {
+        throw new AppError(status.BAD_REQUEST, "This is not your prescription!")
+    }
+
+    // Delete PDF from Cloudinary if it exists
+    if (prescriptionData.pdfurl) {
+        try {
+            await deleteFileFromCloudinary(prescriptionData.pdfurl);
+        } catch (deleteError) {
+            // Log but don't fail - still delete from database
+            console.error("Failed to delete PDF from Cloudinary:", deleteError);
+        }
+    }
+
+    // Delete prescription from database
+    await prisma.prescription.delete({
+        where: {
+            id: prescriptionId
+        }
+    });
+}
+
+
+
 
 export const prescriptionServices={
-    givePrescription
+    givePrescription,
+    getAllPrescriptions,
+    deletePrescription
 }
