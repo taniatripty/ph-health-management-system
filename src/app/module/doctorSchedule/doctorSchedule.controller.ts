@@ -46,6 +46,32 @@ const getDoctorScheduleById = catchAsync(async (req, res) => {
         data: doctorSchedule
     });
 });
+const getMyDoctorSchedules = catchAsync(async (req, res) => {
+    const user=req.user
+    const query = req.query;
+    const result  = await doctorScheduleServices.getMySchedules(user,query as IQueryParams);
+    sendResponse({res, 
+        success: true,
+        statusCode: status.OK,
+        message: 'My  schedules retrieved successfully',
+        data: result.data,
+        meta: result.meta
+    });
+});
+
+
+const updatedoctorSchedule = catchAsync(async (req, res) => {
+    const user=req.user
+    const payload=req.body
+    
+    const doctorSchedule = await doctorScheduleServices.updateDoctorSchedule(user,payload);
+    sendResponse({res, 
+        success: true,
+        statusCode: status.OK,
+        message: 'Doctor schedule update successfully',
+        data: doctorSchedule
+    });
+});
 const deleteDoctorSchedule = catchAsync(async (req, res) => {
     const {id}=req.params
     const user=req.user
@@ -63,6 +89,8 @@ const deleteDoctorSchedule = catchAsync(async (req, res) => {
 export const doctorScheduleContorller={
 createDoctorSchedule,
 getAllDoctorSchedules,
+getMyDoctorSchedules,
 getDoctorScheduleById,
+updatedoctorSchedule,
 deleteDoctorSchedule
 }

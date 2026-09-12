@@ -8,6 +8,10 @@ const router=Router();
 router.post("/create",checkAuth(Role.DOCTOR), doctorScheduleContorller.createDoctorSchedule)
 router.get("/",checkAuth(Role.DOCTOR,Role.PATIENT,Role.SUPER_ADMIN,Role.ADMIN), doctorScheduleContorller.getAllDoctorSchedules)
 router.delete("/:id",checkAuth(Role.DOCTOR), doctorScheduleContorller.deleteDoctorSchedule)
+router.get("/my",checkAuth(Role.DOCTOR), doctorScheduleContorller.getMyDoctorSchedules)
+
+router.patch("/update",checkAuth(Role.DOCTOR), doctorScheduleContorller.updatedoctorSchedule)
+
 router.get("/:doctorId/schedule/:scheduleId", checkAuth(Role.ADMIN,Role.DOCTOR, Role.SUPER_ADMIN),doctorScheduleContorller.getDoctorScheduleById);
 
 export const doctorScheduleRoutes=router
