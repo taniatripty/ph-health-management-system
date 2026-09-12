@@ -55,7 +55,7 @@ const updateSchedule  = catchAsync(async (req, res) => {
     sendResponse({res, 
         success: true,
         statusCode: status.OK,
-        message: 'Schedules retrieved successfully',
+        message: 'Schedule update successfully',
         data: result
        
     });

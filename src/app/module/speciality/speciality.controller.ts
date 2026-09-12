@@ -1,5 +1,6 @@
 
 
+import status from "http-status";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import { specialityService } from "./speciality.services";
@@ -21,6 +22,37 @@ const createSpeciality = catchAsync(async (req , res) => {
     data: result,
   });
 });
+
+
+const getAllSpeciality = catchAsync(async (req , res) => {
+  
+  const result = await specialityService.getAllSpecialties();
+
+  sendResponse({
+    res,
+    statusCode:status.OK,
+    success: true,
+    message: "Get all speciality  successfully",
+    data: result,
+  });
+});
+
+
+const deleteScpecialty = catchAsync(async (req , res) => {
+  const {id}=req.params
+   await specialityService.deleteSpecialty(id as string);
+
+  sendResponse({
+    res,
+    statusCode:status.OK,
+    success: true,
+    message: "Speciality deleted successfully",
+   
+  });
+});
+
+
+
 
 
 
@@ -80,5 +112,7 @@ const createSpeciality = catchAsync(async (req , res) => {
 
 export const specialityController = {
   createSpeciality,
+  getAllSpeciality,
+  deleteScpecialty
  
 };

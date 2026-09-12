@@ -16,5 +16,8 @@ router.post(
   specialityController.createSpeciality
 );
 
+router.get("/",specialityController.getAllSpeciality)
+router.delete("/:id", specialityController.deleteScpecialty)
+
 
 export const specialityRoute = router;
