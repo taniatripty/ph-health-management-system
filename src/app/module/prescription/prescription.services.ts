@@ -7,6 +7,7 @@ import { prisma } from "../../lib/prisma";
 import { sendEmail } from "../../utlis/email";
 import { ICreatePrescriptionPayload } from "./prescription.interface";
 import { generatePrescriptionPDF } from "./prescription.utils";
+import { Role } from "../../../generated/prisma/enums";
 
 
 
@@ -144,6 +145,54 @@ const getAllPrescriptions = async () => {
     return result;
 };
 
+const myPrescriptions = async (user: IRequest) => {
+    const isUserExists = await prisma.user.findUnique({
+        where: {
+            email: user?.email
+        }
+    });
+
+    if (!isUserExists) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    if (isUserExists.role === Role.DOCTOR) {
+        const prescriptions = await prisma.prescription.findMany({
+            where: {
+                doctor: {
+                    email: user?.email
+                }
+            },
+            include: {
+                patient: true,
+                doctor: true,
+                appointment: true,
+            }
+        });
+        return prescriptions;
+    }
+
+    if (isUserExists.role === Role.PATIENT) {
+        const prescriptions = await prisma.prescription.findMany({
+            where: {
+                patient: {
+                    email: user?.email
+                }
+            },
+            include: {
+                patient: true,
+                doctor: true,
+                appointment: true,
+            }
+        });
+        return prescriptions;
+    }
+
+
+};
+
+
+
 const deletePrescription = async (user: IRequest, prescriptionId: string): Promise<void> => {
     // Verify user exists
     const isUserExists = await prisma.user.findUnique({
@@ -195,5 +244,6 @@ const deletePrescription = async (user: IRequest, prescriptionId: string): Promi
 export const prescriptionServices={
     givePrescription,
     getAllPrescriptions,
+    myPrescriptions,
     deletePrescription
 }
