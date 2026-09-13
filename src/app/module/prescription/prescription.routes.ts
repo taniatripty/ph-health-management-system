@@ -7,5 +7,6 @@ const router=Router();
 router.post("/give",checkAuth(Role.DOCTOR), prescriptionController.givePrescription)
 router.get("/",prescriptionController.getAllPrescription)
 router.get("/my",checkAuth(Role.DOCTOR,Role.PATIENT),prescriptionController.myPrescription)
+router.patch("/:id",checkAuth(Role.DOCTOR),prescriptionController.updatePrescription)
 router.delete("/:id",checkAuth(Role.DOCTOR),prescriptionController.deletePrescription)
 export const prescriptionRoutes=router
