@@ -84,9 +84,9 @@ app.use(
 
 cron.schedule("*/25 * * * *", async () => {
   try {
-    console.log(
-      "Running cron job to cancel unpaid appointments...",
-    );
+    // console.log(
+    //   "Running cron job to cancel unpaid appointments...",
+    // );
 
     await appointmentServices.cancelUnpaidAppointments();
   } catch (error: any) {

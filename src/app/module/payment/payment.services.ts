@@ -130,7 +130,7 @@ const handlerStripeWebhookEvent = async (event : Stripe.Event) =>{
             const paymentId = session.metadata?.paymentId;
 
             if (!appointmentId || !paymentId) {
-                console.error("⚠️ Missing metadata in webhook event");
+                console.error(" Missing metadata in webhook event");
                 return { message: "Missing metadata" };
             }
 
@@ -146,7 +146,7 @@ const handlerStripeWebhookEvent = async (event : Stripe.Event) =>{
             });
 
             if (!appointment) {
-                console.error(`⚠️ Appointment ${appointmentId} not found. Payment may be for expired appointment.`);
+                console.error(` Appointment ${appointmentId} not found. Payment may be for expired appointment.`);
                 return { message: "Appointment not found" };
             }
             let pdfBuffer: Buffer | null = null;
@@ -188,9 +188,9 @@ const handlerStripeWebhookEvent = async (event : Stripe.Event) =>{
 
                         invoiceUrl = cloudinaryResponse?.secure_url;
 
-                        console.log(`✅ Invoice PDF generated and uploaded for payment ${paymentId}`);
+                        console.log(` Invoice PDF generated and uploaded for payment ${paymentId}`);
                     } catch (pdfError) {
-                        console.error("❌ Error generating/uploading invoice PDF:", pdfError);
+                        console.error(" Error generating/uploading invoice PDF:", pdfError);
                         // Continue with payment update even if PDF generation fails
                     }
                 }
@@ -238,7 +238,7 @@ const handlerStripeWebhookEvent = async (event : Stripe.Event) =>{
 
                     console.log(`✅ Invoice email sent to ${appointment.patient.email}`);
                 } catch (emailError) {
-                    console.error("❌ Error sending invoice email:", emailError);
+                    console.error(" Error sending invoice email:", emailError);
                     // Log but don't fail the payment if email fails
                 }
             }
