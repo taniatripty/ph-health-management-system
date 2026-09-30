@@ -6,9 +6,7 @@ import { DoctorController } from "./doctor.controller";
 const router = Router();
 
 router.get(
-  "/",
-  checkAuth(Role.DOCTOR, Role.PATIENT, Role.ADMIN, Role.SUPER_ADMIN),
-  DoctorController.getAllDoctors,
+  "/", DoctorController.getAllDoctors,
 );
 router.get(
   "/:id",

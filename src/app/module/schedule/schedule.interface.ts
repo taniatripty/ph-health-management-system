@@ -13,3 +13,4 @@ export interface IUpdateSchedulePayload {
     startTime : string;
     endTime : string;
 }
+
