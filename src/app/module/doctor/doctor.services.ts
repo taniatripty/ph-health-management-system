@@ -85,7 +85,6 @@ const getAllDoctors = async (query : IQueryParams) => {
         .fields()
         .execute();
 
-        console.log(result);
     return result;
 }
 

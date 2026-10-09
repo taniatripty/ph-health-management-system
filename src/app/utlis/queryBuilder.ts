@@ -40,7 +40,7 @@ TInclude = Record<string, unknown>
     search() : this {
         const {searchTerm} = this.queryParams;
         const { searchableFields} = this.config;
-        // doctorSearchableFields = ['user.name', 'user.email', 'specialties.specialty.title' , 'specialties.specialty.description']
+        // Nested searchable paths follow the Prisma relation field names.
         if(searchTerm && searchableFields && searchableFields.length > 0){
             const searchConditions : Record<string, unknown>[] = searchableFields.map((field) => {
                 if(field.includes(".")){
@@ -458,4 +458,3 @@ TInclude = Record<string, unknown>
         return Object.keys(rangeQuery).length > 0 ? rangeQuery : value;
     }
 }
-
