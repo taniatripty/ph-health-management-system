@@ -1,36 +1,92 @@
 import status from "http-status";
 import AppError from "../../errorhelper/AppError";
 import { prisma } from "../../lib/prisma";
+import {Doctor, Prisma} from "../../../generated/prisma/client";
 import { IUpdateDoctorPayload } from "./doctor.interface";
 import { UserStatus } from "../../../generated/prisma/enums";
+import { QueryBuilder } from "../../utlis/queryBuilder";
+import { doctorFilterableFields, doctorIncludeConfig, doctorSearchableFields } from "./doctor.constrant";
+import { IQueryParams } from "../../interface/query.interface";
 
-const getAllDoctors = async () => {
-    const doctors = await prisma.doctor.findMany({
-        where:{
-      isDeleted:false
-        },
-        include: {
+// const getAllDoctors = async () => {
+//     const doctors = await prisma.doctor.findMany({
+//         where:{
+//       isDeleted:false
+//         },
+//         include: {
+//             user: true,
+//             specialties: {
+//                 include: {
+//                     speciatily:true
+//                 }
+//             },
+//          appointment:{
+//             include:{
+//                 patient:true,
+//                 payment:true
+//             }
+//          },
+//          doctorSchedule:{
+//             include:{
+//                 schedule:true
+//             }
+//          }
+           
+//         }
+//     })
+//     return doctors;
+// }
+
+const getAllDoctors = async (query : IQueryParams) => {
+    // const doctors = await prisma.doctor.findMany({
+    //     where: {
+    //         isDeleted: false,
+    //     },
+    //     include: {
+    //         user: true,
+    //         specialties: {
+    //             include: {
+    //                 specialty: true
+    //             }
+    //         }
+    //     }
+    // })
+
+    // // const query = new QueryBuilder().paginate().search().filter();
+    // return doctors;
+
+    const queryBuilder = new QueryBuilder<Doctor, Prisma.DoctorWhereInput, Prisma.DoctorInclude>(
+        prisma.doctor,
+        query,
+        {
+            searchableFields: doctorSearchableFields,
+            filterableFields: doctorFilterableFields,
+        }
+    )
+
+    const result = await queryBuilder
+        .search()
+        .filter()
+        .where({
+            isDeleted: false,
+        })
+        .include({
             user: true,
+            // specialties: true,
             specialties: {
-                include: {
-                    speciatily:true
+                include:{
+                    speciatily: true
                 }
             },
-         appointment:{
-            include:{
-                patient:true,
-                payment:true
-            }
-         },
-         doctorSchedule:{
-            include:{
-                schedule:true
-            }
-         }
-           
-        }
-    })
-    return doctors;
+        })
+        .dynamicInclude(doctorIncludeConfig)
+        .paginate()
+        .sort()
+        .fields()
+        .execute();
+
+        console.log(result);
+    return result;
 }
 
 const getDoctorById = async (id: string) => {
