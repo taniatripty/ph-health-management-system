@@ -4,8 +4,9 @@ export const doctorSearchableFields = ['name', 'email', 'qualification', 'design
 
 export const doctorFilterableFields = ['gender', 'isDeleted', 'appointmentFee', 'experience', 'registrationNumber', 'specialties.specialtyId', 'currentWorkingPlace', 'designation', 'qualification', 'specialties.speciatily.title', 'user.role'];
 
-export const doctorPartialMatchFields = ['qualification'];
+export const doctorPartialMatchFields = ['qualification', 'specialties.speciatily.title'];
 export const doctorNormalizeReversedRangeFields = ['appointmentFee'];
+export const doctorEnumFields = ['gender', 'user.role'];
 
 export const doctorIncludeConfig : Partial<Record<keyof Prisma.DoctorInclude, Prisma.DoctorInclude[keyof Prisma.DoctorInclude]>> ={
     user: true,

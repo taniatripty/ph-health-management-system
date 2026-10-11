@@ -168,8 +168,8 @@ TInclude = Record<string, unknown>
                     const queryRelation = queryWhere[relation] as Record<string, unknown>;
                     const countRelation = countQueryWhere[relation] as Record<string, unknown>;
 
-                    queryRelation[nestedField] = this.parseFilterValue(value);
-                    countRelation[nestedField] = this.parseFilterValue(value);
+                    queryRelation[nestedField] = this.parseFieldFilterValue(value, key);
+                    countRelation[nestedField] = this.parseFieldFilterValue(value, key);
                     return;
                 }
                 else if(parts.length === 3){
@@ -208,8 +208,8 @@ TInclude = Record<string, unknown>
                     const queryNestedRelation = querySome[nestedRelation] as Record<string, unknown>;
                     const countNestedRelation = countSome[nestedRelation] as Record<string, unknown>;
 
-                    queryNestedRelation[nestedField] = this.parseFilterValue(value);
-                    countNestedRelation[nestedField] = this.parseFilterValue(value);
+                    queryNestedRelation[nestedField] = this.parseFieldFilterValue(value, key);
+                    countNestedRelation[nestedField] = this.parseFieldFilterValue(value, key);
 
                     return;
                 }
@@ -232,19 +232,8 @@ TInclude = Record<string, unknown>
             }
 
             //direct value parsing
-            if(typeof value === 'string' && this.config.partialMatchFields?.includes(key)){
-                const stringFilter: PrismaStringFilter = {
-                    contains: value,
-                    mode: 'insensitive',
-                };
-
-                queryWhere[key] = stringFilter;
-                countQueryWhere[key] = stringFilter;
-                return;
-            }
-
-            queryWhere[key] = this.parseFilterValue(value);
-            countQueryWhere[key] = this.parseFilterValue(value);
+            queryWhere[key] = this.parseFieldFilterValue(value, key);
+            countQueryWhere[key] = this.parseFieldFilterValue(value, key);
         })
         return this;
     }
@@ -428,8 +417,7 @@ TInclude = Record<string, unknown>
         return result;
     }
 
-    private parseFilterValue(value : unknown) : unknown {
-
+    private parseFilterValue(value : unknown, isEnumField = false) : unknown {
         if(value === 'true'){
             return true;
         }
@@ -441,11 +429,26 @@ TInclude = Record<string, unknown>
             return Number(value);
         }
 
+        if(isEnumField && typeof value === 'string'){
+            return value.toUpperCase();
+        }
+
         if(Array.isArray(value)){
-            return { in : value.map((item) => this.parseFilterValue(item)) }
+            return { in : value.map((item) => this.parseFilterValue(item, isEnumField)) }
         }
 
         return value;
+    }
+
+    private parseFieldFilterValue(value: unknown, field: string): unknown {
+        if(typeof value === 'string' && this.config.partialMatchFields?.includes(field)){
+            return {
+                contains: value,
+                mode: 'insensitive',
+            } satisfies PrismaStringFilter;
+        }
+
+        return this.parseFilterValue(value, this.config.enumFields?.includes(field));
     }
 
     private parseRangeFilter(

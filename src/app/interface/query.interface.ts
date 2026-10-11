@@ -60,6 +60,7 @@ export interface IQueryConfig {
     filterableFields?: string[];
     partialMatchFields?: string[];
     normalizeReversedRangeFields?: string[];
+    enumFields?: string[];
 }
 
 export interface PrismaStringFilter{

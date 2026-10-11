@@ -5,7 +5,7 @@ import {Doctor, Prisma} from "../../../generated/prisma/client";
 import { IUpdateDoctorPayload } from "./doctor.interface";
 import { UserStatus } from "../../../generated/prisma/enums";
 import { QueryBuilder } from "../../utlis/queryBuilder";
-import { doctorFilterableFields, doctorIncludeConfig, doctorNormalizeReversedRangeFields, doctorPartialMatchFields, doctorSearchableFields } from "./doctor.constrant";
+import { doctorEnumFields, doctorFilterableFields, doctorIncludeConfig, doctorNormalizeReversedRangeFields, doctorPartialMatchFields, doctorSearchableFields } from "./doctor.constrant";
 import { IQueryParams } from "../../interface/query.interface";
 
 // const getAllDoctors = async () => {
@@ -63,6 +63,7 @@ const getAllDoctors = async (query : IQueryParams) => {
             filterableFields: doctorFilterableFields,
             partialMatchFields: doctorPartialMatchFields,
             normalizeReversedRangeFields: doctorNormalizeReversedRangeFields,
+            enumFields: doctorEnumFields,
         }
     )
 
