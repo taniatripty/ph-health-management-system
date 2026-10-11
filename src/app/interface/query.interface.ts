@@ -58,6 +58,8 @@ export interface IQueryParams {
 export interface IQueryConfig {
     searchableFields?: string[];
     filterableFields?: string[];
+    partialMatchFields?: string[];
+    normalizeReversedRangeFields?: string[];
 }
 
 export interface PrismaStringFilter{

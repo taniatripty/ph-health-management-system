@@ -112,7 +112,22 @@ TInclude = Record<string, unknown>
 
         Object.keys(this.queryParams).forEach((key) => {
             if(!excludedField.includes(key)){
-                filterParams[key] = this.queryParams[key];
+                const bracketFilter = key.match(/^(.*)\[(lt|lte|gt|gte|equals|not|contains|startsWith|endsWith|in|notIn)\]$/);
+
+                if(bracketFilter && bracketFilter[1]){
+                    const [, field, operator] = bracketFilter;
+                    const existingValue = filterParams[field];
+                    const rangeFilters = typeof existingValue === 'object' && existingValue !== null && !Array.isArray(existingValue)
+                        ? existingValue as Record<string, unknown>
+                        : {};
+
+                    filterParams[field] = {
+                        ...rangeFilters,
+                        [operator]: this.queryParams[key],
+                    };
+                }else{
+                    filterParams[key] = this.queryParams[key];
+                }
             }
         })
 
@@ -207,12 +222,27 @@ TInclude = Record<string, unknown>
 
             // Range filter parsing
             if(typeof value === 'object' && value !== null && !Array.isArray(value)){
-                queryWhere[key] = this.parseRangeFilter(value as Record<string, string | number>);
-                countQueryWhere[key] = this.parseRangeFilter(value as Record<string, string | number>);
+                const rangeFilter = this.parseRangeFilter(
+                    value as Record<string, string | number>,
+                    this.config.normalizeReversedRangeFields?.includes(key) ?? false
+                );
+                queryWhere[key] = rangeFilter;
+                countQueryWhere[key] = rangeFilter;
                 return;
             }
 
             //direct value parsing
+            if(typeof value === 'string' && this.config.partialMatchFields?.includes(key)){
+                const stringFilter: PrismaStringFilter = {
+                    contains: value,
+                    mode: 'insensitive',
+                };
+
+                queryWhere[key] = stringFilter;
+                countQueryWhere[key] = stringFilter;
+                return;
+            }
+
             queryWhere[key] = this.parseFilterValue(value);
             countQueryWhere[key] = this.parseFilterValue(value);
         })
@@ -418,13 +448,15 @@ TInclude = Record<string, unknown>
         return value;
     }
 
-    private parseRangeFilter(value : Record<string, string | number>) : PrismaNumberFilter| PrismaStringFilter | Record<string, unknown> {
+    private parseRangeFilter(
+        value : Record<string, string | number>,
+        normalizeReversedBounds = false
+    ) : PrismaNumberFilter| PrismaStringFilter | Record<string, unknown> {
 
         const rangeQuery: Record<string, string | number | (string | number)[] > = {};
 
         Object.keys(value).forEach((operator) => {
             const operatorValue = value[operator];
-
 
             const parsedValue : string | number = typeof operatorValue === 'string' && !isNaN(Number(operatorValue)) ? Number(operatorValue) : operatorValue;
 
@@ -454,6 +486,23 @@ TInclude = Record<string, unknown>
 
             }
         });
+
+        if(normalizeReversedBounds){
+            const lowerBoundOperators = (['gt', 'gte'] as const).filter((operator) => typeof rangeQuery[operator] === 'number');
+            const upperBoundOperators = (['lt', 'lte'] as const).filter((operator) => typeof rangeQuery[operator] === 'number');
+
+            if(lowerBoundOperators.length === 1 && upperBoundOperators.length === 1){
+                const lowerBoundOperator = lowerBoundOperators[0];
+                const upperBoundOperator = upperBoundOperators[0];
+                const lowerBound = rangeQuery[lowerBoundOperator] as number;
+                const upperBound = rangeQuery[upperBoundOperator] as number;
+
+                if(lowerBound > upperBound){
+                    rangeQuery[lowerBoundOperator] = upperBound;
+                    rangeQuery[upperBoundOperator] = lowerBound;
+                }
+            }
+        }
 
         return Object.keys(rangeQuery).length > 0 ? rangeQuery : value;
     }
