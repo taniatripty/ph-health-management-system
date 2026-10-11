@@ -104,14 +104,14 @@ const getDoctorById = async (id: string) => {
                     speciatily: true
                 }
             },
-            appointments: {
+            appointment: {
                 include: {
                     patient: true,
                     schedule: true,
-                    prescription: true,
+                    pescription: true,
                 }
             },
-            doctorSchedules: {
+            doctorSchedule: {
                 include: {
                     schedule: true,
                 }
@@ -126,6 +126,7 @@ const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
     const isDoctorExist = await prisma.doctor.findUnique({
         where: {
             id,
+            isDeleted: false,
         }
     })
 
@@ -145,6 +146,18 @@ const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
                     ...doctorData,
                 }
             })
+
+            if (doctorData.name !== undefined || doctorData.profilePhoto !== undefined) {
+                await tx.user.update({
+                    where: {
+                        id: isDoctorExist.userId,
+                    },
+                    data: {
+                        ...(doctorData.name !== undefined && { name: doctorData.name }),
+                        ...(doctorData.profilePhoto !== undefined && { image: doctorData.profilePhoto }),
+                    },
+                });
+            }
         }
 
         if (specialties && specialties.length > 0) {
