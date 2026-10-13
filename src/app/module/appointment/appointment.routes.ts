@@ -10,6 +10,6 @@ router.post("/create",checkAuth(Role.PATIENT),appointmentController.createbookap
 router.get("/",checkAuth(Role.PATIENT),appointmentController.getMyAppointments)
 router.get("/all",checkAuth(Role.PATIENT,Role.DOCTOR,Role.ADMIN,Role.SUPER_ADMIN),appointmentController.getAllAppointments)
 router.get("/:id",checkAuth(Role.PATIENT,Role.DOCTOR),appointmentController.getMySingleAppointments)
-router.post("/bookwithpaylatter",appointmentController.bookappointmentwithpaylatter)
-router.post("/initiatePayment/:id",appointmentController.initiatePayment)
+router.post("/bookwithpaylatter",checkAuth(Role.PATIENT),appointmentController.bookappointmentwithpaylatter)
+router.post("/initiatePayment/:id",checkAuth(Role.PATIENT),appointmentController.initiatePayment)
 export const appointmentRoutes=router

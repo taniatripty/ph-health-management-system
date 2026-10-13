@@ -1,4 +1,5 @@
 import status from "http-status";
+import AppError from "../../errorhelper/AppError";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import { appointmentServices } from "./appointment.services";
@@ -54,33 +55,39 @@ const getAllAppointments = catchAsync(async (req, res) => {
 });
 
 const bookappointmentwithpaylatter = catchAsync(async (req , res) => {
-  const payload=req.body
- const user=req.user
+  const payload = req.body;
+  const user = req.user;
 
-  console.log("paylod :",payload)
-  const result = await appointmentServices.bookAppointmentWithPayLater(payload,user);
+  if (!payload?.doctorId || !payload?.scheduleId) {
+    throw new AppError(status.BAD_REQUEST, "Doctor ID and schedule ID are required");
+  }
+
+  const result = await appointmentServices.bookAppointmentWithPayLater(payload, user);
 
   sendResponse({
     res,
     statusCode: 201,
     success: true,
-    message: " Book appointment with paylater successfully",
+    message: "Book appointment with pay later successfully",
     data: result,
   });
 });
 
 const initiatePayment = catchAsync(async (req , res) => {
-  const appointmentId=req.params.id
- const user=req.user
+  const appointmentId = req.params.id;
+  const user = req.user;
 
-  
-  const result = await appointmentServices.initiatePayment(appointmentId as string,user);
+  if (!appointmentId) {
+    throw new AppError(status.BAD_REQUEST, "Appointment ID is required");
+  }
+
+  const result = await appointmentServices.initiatePayment(appointmentId as string, user);
 
   sendResponse({
     res,
     statusCode: 201,
     success: true,
-    message: " initiate payment successfully",
+    message: "Initiate payment successfully",
     data: result,
   });
 });

@@ -239,6 +239,10 @@ const bookAppointmentWithPayLater = async (payload : IBookAppointmentPayload, us
         }
     });
 
+    if (doctorSchedule.isBooked) {
+        throw new AppError(status.BAD_REQUEST, "This schedule is already booked");
+    }
+
     const videoCallingId = String(uuidv7());
 
     const result = await prisma.$transaction(async (tx) => {
@@ -291,7 +295,7 @@ const initiatePayment = async (appointmentId: string, user : IRequest) => {
         }
     });
 
-    const appointmentData = await prisma.appointment.findUniqueOrThrow({
+    const appointmentData = await prisma.appointment.findUnique({
         where: {
             id: appointmentId,
             patientId: patientData.id,
@@ -302,25 +306,25 @@ const initiatePayment = async (appointmentId: string, user : IRequest) => {
         }
     });
 
-    if(!appointmentData){
-        throw new AppError( status.NOT_FOUND,"Appointment not found");
+    if (!appointmentData) {
+        throw new AppError(status.NOT_FOUND, "Appointment not found");
     }
 
-    if(!appointmentData.payment){
-        throw new AppError( status.NOT_FOUND, "Payment data not found for this appointment");
+    if (!appointmentData.payment) {
+        throw new AppError(status.NOT_FOUND, "Payment data not found for this appointment");
     }
 
-    if(appointmentData.paymentStatus === PaymentStatus.PAID){
-        throw new AppError( status.BAD_REQUEST, "Payment already completed for this appointment");
-    };
+    if (appointmentData.paymentStatus === PaymentStatus.PAID || appointmentData.payment.status === PaymentStatus.PAID) {
+        throw new AppError(status.BAD_REQUEST, "Payment already completed for this appointment");
+    }
 
-    if(appointmentData.status === AppointmentStatus.CANCELED){
-        throw new AppError( status.BAD_REQUEST ,"Appointment is canceled");
+    if (appointmentData.status === AppointmentStatus.CANCELED) {
+        throw new AppError(status.BAD_REQUEST, "Appointment is canceled");
     }
 
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
-        mode: 'payment',
+        mode: "payment",
         line_items: [
             {
                 price_data: {
@@ -337,20 +341,13 @@ const initiatePayment = async (appointmentId: string, user : IRequest) => {
             appointmentId: appointmentData.id,
             paymentId: appointmentData.payment.id,
         },
-
         success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success?appointment_id=${appointmentData.id}&payment_id=${appointmentData.payment.id}`,
-
-      
-        // cancel_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-failed`,
         cancel_url: `${envVars.FRONTEND_URL}/dashboard/appointments?error=payment_cancelled`,
-    })
-    
-    console.log("-----session-----",session.url)
+    });
 
     return {
-        
-        paymentUrl:session.url,
-    }
+        paymentUrl: session.url,
+    };
 }
 
 const cancelUnpaidAppointments = async () => {
