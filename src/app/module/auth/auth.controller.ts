@@ -8,6 +8,7 @@ import { cookieUtils } from "../../utlis/cookie";
 import { tokenUtils } from "../../utlis/token";
 import { authServices } from "./auth.services";
 import { auth } from "../../lib/auth";
+import AppError from "../../errorhelper/AppError";
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
   const result = await authServices.registerUser(req.body);
@@ -64,8 +65,13 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
 const getnewToken = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   const betterAuthSessionToken = req.cookies["better-auth.session_token"];
-  if (!refreshToken) {
-    throw new Error(`no refresh Token`);
+  if (!refreshToken || !betterAuthSessionToken) {
+    throw new AppError(
+      status.UNAUTHORIZED,
+      !refreshToken
+        ? "Refresh token cookie is missing"
+        : "Session token cookie is missing",
+    );
   }
   const result = await authServices.getnewToken(
     refreshToken,
