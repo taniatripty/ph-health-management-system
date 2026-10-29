@@ -24,16 +24,7 @@ export interface prismaCountArgs{
     [key: string] : unknown;
 }
 
-// export interface prismaModelDelegate{
-//     findMany(args?:any):Promise<unknown[]>;
-//     count(args?:any):Promise<any[]>;
 
-// }
-
-// export interface prismaModelDelegate<T = unknown> {
-//   findMany(args?: PrismaFindManyArgs): Promise<T[]>;
-//   count(args?: prismaCountArgs): Promise<number>;
-// }
 export interface prismaModelDelegate<T = unknown> {
   findMany: <A extends object>(
     args?: A
